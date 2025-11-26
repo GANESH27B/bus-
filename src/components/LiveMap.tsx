@@ -1,14 +1,22 @@
-"use client";
+'use client';
 
-import { GoogleMap, useJsApiLoader, Marker, InfoWindow } from '@react-google-maps/api';
+import {
+  GoogleMap,
+  useJsApiLoader,
+  Marker,
+  InfoWindow,
+} from '@react-google-maps/api';
 import React, { useState, useEffect, useCallback } from 'react';
-import { Bus } from '@/lib/types';
+import type { Bus, Stop } from '@/lib/types';
 import { routes } from '@/lib/data';
 import { Button } from './ui/button';
 import { LocateFixed } from 'lucide-react';
 
 interface LiveMapProps {
   buses: Bus[];
+  stops: Stop[];
+  center?: google.maps.LatLngLiteral | null;
+  zoom?: number;
 }
 
 const containerStyle = {
@@ -18,7 +26,7 @@ const containerStyle = {
 
 const defaultCenter = {
   lat: 34.0522,
-  lng: -118.2437
+  lng: -118.2437,
 };
 
 const mapOptions = {
@@ -26,20 +34,20 @@ const mapOptions = {
   zoomControl: true,
 };
 
-function LiveMap({ buses }: LiveMapProps) {
+function LiveMap({ buses, stops, center, zoom }: LiveMapProps) {
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
-    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || ""
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '',
   });
 
   const [map, setMap] = useState<google.maps.Map | null>(null);
-  const [activeMarker, setActiveMarker] = useState<Bus | null>(null);
+  const [activeMarker, setActiveMarker] = useState<Bus | Stop | null>(null);
   const [myLocation, setMyLocation] = useState<google.maps.LatLngLiteral | null>(null);
-  
+
   const centerOnUser = useCallback(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
-        (position) => {
+        position => {
           const userLocation = {
             lat: position.coords.latitude,
             lng: position.coords.longitude,
@@ -49,7 +57,7 @@ function LiveMap({ buses }: LiveMapProps) {
           map?.setZoom(15);
         },
         () => {
-          console.log("Error: The Geolocation service failed.");
+          console.log('Error: The Geolocation service failed.');
           // Optionally, inform the user that location could not be fetched
         }
       );
@@ -60,37 +68,47 @@ function LiveMap({ buses }: LiveMapProps) {
   }, [map]);
 
   useEffect(() => {
-    if (map) {
-      centerOnUser();
+    if (map && center) {
+        map.panTo(center);
+        if (zoom) {
+            map.setZoom(zoom);
+        }
     }
-  }, [map, centerOnUser]);
+  }, [map, center, zoom]);
 
 
-  const handleMarkerClick = (bus: Bus) => {
-    setActiveMarker(bus);
+  const handleMarkerClick = (marker: Bus | Stop) => {
+    setActiveMarker(marker);
   };
 
   const onLoad = useCallback(function callback(mapInstance: google.maps.Map) {
     setMap(mapInstance);
-  }, []);
+    centerOnUser();
+  }, [centerOnUser]);
 
   const onUnmount = useCallback(function callback(map: google.maps.Map) {
     setMap(null);
   }, []);
 
-  if (!isLoaded) return <div className="flex items-center justify-center h-[600px] bg-muted">Loading Map...</div>;
+  if (!isLoaded)
+    return (
+      <div className="flex items-center justify-center h-[600px] bg-muted">
+        Loading Map...
+      </div>
+    );
 
   return (
-    <div className='relative'>
+    <div className="relative">
       <GoogleMap
         mapContainerStyle={containerStyle}
-        center={defaultCenter}
-        zoom={12}
+        center={center || defaultCenter}
+        zoom={zoom || 12}
         options={mapOptions}
         onLoad={onLoad}
         onUnmount={onUnmount}
       >
-        {buses.map((bus) => (
+        {/* Bus Markers */}
+        {buses.map(bus => (
           <Marker
             key={bus.id}
             position={{ lat: bus.lat, lng: bus.lng }}
@@ -104,6 +122,24 @@ function LiveMap({ buses }: LiveMapProps) {
               strokeColor: 'hsl(var(--primary-foreground))',
               rotation: 0,
             }}
+            zIndex={100}
+          />
+        ))}
+
+        {/* Stop Markers */}
+        {stops.map(stop => (
+          <Marker
+            key={stop.id}
+            position={{ lat: stop.lat, lng: stop.lng }}
+            onClick={() => handleMarkerClick(stop)}
+            icon={{
+              path: 'M-10,0a10,10 0 1,0 20,0a10,10 0 1,0 -20,0',
+              fillColor: 'hsl(var(--secondary))',
+              fillOpacity: 0.8,
+              strokeColor: 'hsl(var(--secondary-foreground))',
+              strokeWeight: 1,
+              scale: 0.6,
+            }}
           />
         ))}
 
@@ -114,10 +150,10 @@ function LiveMap({ buses }: LiveMapProps) {
             icon={{
               path: window.google.maps.SymbolPath.CIRCLE,
               scale: 8,
-              fillColor: 'hsl(var(--accent))',
+              fillColor: 'hsl(var(--ring))',
               fillOpacity: 1,
-              strokeColor: 'hsl(var(--accent-foreground))',
-              strokeWeight: 2
+              strokeColor: 'hsl(var(--background))',
+              strokeWeight: 2,
             }}
           />
         )}
@@ -127,11 +163,20 @@ function LiveMap({ buses }: LiveMapProps) {
             position={{ lat: activeMarker.lat, lng: activeMarker.lng }}
             onCloseClick={() => setActiveMarker(null)}
           >
-            <div className='p-2'>
-              <h3 className="font-bold text-base">Bus {activeMarker.number}</h3>
-              <p className="text-sm">Route: {routes.find(r => r.id === activeMarker.routeId)?.number}</p>
-              <p className="text-sm capitalize">Status: {activeMarker.status}</p>
-              <p className="text-sm">Driver: {activeMarker.driver}</p>
+            <div className="p-2">
+              {'number' in activeMarker ? (
+                <>
+                  <h3 className="font-bold text-base">Bus {activeMarker.number}</h3>
+                  <p className="text-sm">
+                    Route:{' '}
+                    {routes.find(r => r.id === activeMarker.routeId)?.number}
+                  </p>
+                  <p className="text-sm capitalize">Status: {activeMarker.status}</p>
+                  <p className="text-sm">Driver: {activeMarker.driver}</p>
+                </>
+              ) : (
+                <h3 className="font-bold text-base">{activeMarker.name}</h3>
+              )}
             </div>
           </InfoWindow>
         )}
