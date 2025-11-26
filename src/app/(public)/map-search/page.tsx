@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -93,7 +94,7 @@ export default function MapSearchPage() {
               <div className="relative">
                 <Input
                   id="search-query"
-                  placeholder="e.g., 'Main Street Park' or '123 Fake St'"
+                  placeholder="e.g., 'City Park' or '123 Main St'"
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   className={cn(hasSpeechSupport && 'pr-12')}
@@ -125,3 +126,5 @@ export default function MapSearchPage() {
     </div>
   );
 }
+
+    

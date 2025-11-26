@@ -136,7 +136,7 @@ export function TripPlanner() {
                     <FormItem>
                       <FormLabel>Starting Point</FormLabel>
                       <FormControl>
-                        <Input placeholder="e.g., Central Station" {...field} />
+                        <Input placeholder="e.g., City Bus Terminal" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -149,7 +149,7 @@ export function TripPlanner() {
                     <FormItem>
                       <FormLabel>Destination</FormLabel>
                       <FormControl>
-                        <Input placeholder="e.g., Westside Mall" {...field} />
+                        <Input placeholder="e.g., Government Hospital" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -278,3 +278,5 @@ export function TripPlanner() {
     </div>
   );
 }
+
+    

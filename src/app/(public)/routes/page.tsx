@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -228,7 +229,7 @@ export default function RoutesPage() {
                                         }
                                     }}
                                 >
-                                <Input placeholder="e.g., Vijayawada" {...field} />
+                                <Input placeholder="e.g., City Bus Terminal" {...field} />
                                 </Autocomplete>
                             </FormControl>
                             <FormMessage />
@@ -254,7 +255,7 @@ export default function RoutesPage() {
                                         }
                                     }}
                                 >
-                                <Input placeholder="e.g., Hyderabad" {...field} />
+                                <Input placeholder="e.g., Railway Station" {...field} />
                                 </Autocomplete>
                             </FormControl>
                             <FormMessage />
@@ -536,5 +537,7 @@ export default function RoutesPage() {
     </div>
   );
 }
+
+    
 
     
