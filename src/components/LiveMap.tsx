@@ -1,7 +1,7 @@
 "use client";
 
 import { GoogleMap, useJsApiLoader, Marker, InfoWindow } from '@react-google-maps/api';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Bus } from '@/lib/types';
 import { routes } from '@/lib/data';
 
@@ -14,7 +14,7 @@ const containerStyle = {
   height: '600px',
 };
 
-const center = {
+const defaultCenter = {
   lat: 34.0522,
   lng: -118.2437
 };
@@ -51,6 +51,28 @@ function LiveMap({ buses }: LiveMapProps) {
   });
 
   const [activeMarker, setActiveMarker] = useState<Bus | null>(null);
+  const [myLocation, setMyLocation] = useState<google.maps.LatLngLiteral | null>(null);
+  const [mapCenter, setMapCenter] = useState(defaultCenter);
+
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const userLocation = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          };
+          setMyLocation(userLocation);
+          setMapCenter(userLocation); // Center map on user's location
+        },
+        () => {
+          console.log("Error: The Geolocation service failed.");
+        }
+      );
+    } else {
+      console.log("Error: Your browser doesn't support geolocation.");
+    }
+  }, []);
 
   const handleMarkerClick = (bus: Bus) => {
     setActiveMarker(bus);
@@ -61,7 +83,7 @@ function LiveMap({ buses }: LiveMapProps) {
   return (
     <GoogleMap
       mapContainerStyle={containerStyle}
-      center={center}
+      center={mapCenter}
       zoom={13}
       options={mapOptions}
     >
@@ -73,7 +95,7 @@ function LiveMap({ buses }: LiveMapProps) {
           icon={{
             path: window.google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
             scale: 6,
-            fillColor: '#205E9B',
+            fillColor: 'hsl(var(--primary))',
             fillOpacity: 1,
             strokeWeight: 2,
             strokeColor: '#ffffff',
@@ -81,6 +103,21 @@ function LiveMap({ buses }: LiveMapProps) {
           }}
         />
       ))}
+
+      {myLocation && (
+        <Marker
+          position={myLocation}
+          title="Your Location"
+           icon={{
+            path: window.google.maps.SymbolPath.CIRCLE,
+            scale: 8,
+            fillColor: 'hsl(var(--accent))',
+            fillOpacity: 1,
+            strokeColor: 'white',
+            strokeWeight: 2
+          }}
+        />
+      )}
 
       {activeMarker && (
         <InfoWindow
