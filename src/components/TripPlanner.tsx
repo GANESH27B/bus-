@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -19,8 +19,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight, Bot, Bus, Clock, Loader2, MapPin, PersonStanding, TramFront, ExternalLink } from "lucide-react";
+import { ArrowRight, Bot, Bus, Clock, Loader2, MapPin, PersonStanding, TramFront, ExternalLink, Mic, MicOff } from "lucide-react";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 const formSchema = z.object({
   start: z.string().min(3, { message: "Please enter a valid starting location." }),
@@ -28,10 +29,15 @@ const formSchema = z.object({
   notes: z.string().optional(),
 });
 
+// A global variable to hold the SpeechRecognition instance, so it can be accessed across renders.
+let speechRecognition: SpeechRecognition | null = null;
+
 export function TripPlanner() {
   const [tripPlan, setTripPlan] = useState<TripPlan | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isListening, setIsListening] = useState(false);
+  const [hasSpeechSupport, setHasSpeechSupport] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -41,6 +47,36 @@ export function TripPlanner() {
       notes: "",
     },
   });
+
+  useEffect(() => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      setHasSpeechSupport(true);
+      speechRecognition = new SpeechRecognition();
+      speechRecognition.continuous = false;
+      speechRecognition.lang = 'en-US';
+      speechRecognition.interimResults = false;
+
+      speechRecognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        const currentNotes = form.getValues("notes");
+        form.setValue("notes", currentNotes ? `${currentNotes} ${transcript}` : transcript);
+        setIsListening(false);
+      };
+
+      speechRecognition.onerror = (event) => {
+        console.error("Speech recognition error", event.error);
+        setIsListening(false);
+      };
+      
+      speechRecognition.onend = () => {
+        setIsListening(false);
+      };
+    } else {
+        setHasSpeechSupport(false);
+    }
+  }, [form]);
+
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
@@ -54,6 +90,18 @@ export function TripPlanner() {
     }
     setIsLoading(false);
   }
+  
+  const handleMicClick = () => {
+    if (!speechRecognition) return;
+
+    if (isListening) {
+      speechRecognition.stop();
+      setIsListening(false);
+    } else {
+      speechRecognition.start();
+      setIsListening(true);
+    }
+  };
 
   const StepIcon = ({ instruction }: { instruction: string }) => {
     const lowerInstruction = instruction.toLowerCase();
@@ -112,9 +160,26 @@ export function TripPlanner() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Notes for Planner (Optional)</FormLabel>
-                      <FormControl>
-                        <Textarea placeholder="e.g., Avoid transfers, prefer scenic route..." {...field} />
-                      </FormControl>
+                      <div className="relative">
+                        <FormControl>
+                          <Textarea placeholder="e.g., Avoid transfers, prefer scenic route..." {...field} className={cn(hasSpeechSupport && "pr-12")}/>
+                        </FormControl>
+                         {hasSpeechSupport && (
+                          <Button 
+                            type="button" 
+                            size="icon" 
+                            variant="ghost" 
+                            onClick={handleMicClick}
+                            className={cn(
+                                "absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary",
+                                isListening && "text-destructive animate-pulse"
+                            )}
+                            aria-label={isListening ? "Stop listening" : "Start listening"}
+                           >
+                            {isListening ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
+                          </Button>
+                        )}
+                      </div>
                       <FormMessage />
                     </FormItem>
                   )}
