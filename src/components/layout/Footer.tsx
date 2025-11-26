@@ -17,6 +17,7 @@ export default function Footer() {
             <Link href="/" className="hover:text-primary transition-colors">Home</Link>
             <Link href="/routes" className="hover:text-primary transition-colors">Routes</Link>
             <Link href="/trip-planner" className="hover:text-primary transition-colors">Trip Planner</Link>
+            <Link href="https://www.google.com/maps/search/?api=1&query=bus+stand" target="_blank" className="hover:text-primary transition-colors">Nearby Stops</Link>
           </nav>
           <div className="text-sm text-muted-foreground">
             &copy; {year} SmartBus Connect. All Rights Reserved.

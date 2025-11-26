@@ -13,6 +13,7 @@ const navLinks = [
   { href: "/", label: "Home" },
   { href: "/routes", label: "Routes" },
   { href: "/trip-planner", label: "Trip Planner" },
+  { href: "https://www.google.com/maps/search/?api=1&query=bus+stand", label: "Nearby Stops", target: "_blank" },
 ];
 
 export default function Header() {
@@ -44,6 +45,7 @@ export default function Header() {
             <Link
               key={link.href}
               href={link.href}
+              target={link.target}
               className={cn(
                 "transition-colors text-primary-foreground/80 hover:text-primary-foreground",
                 pathname === link.href && "text-primary-foreground font-semibold"
@@ -79,6 +81,7 @@ export default function Header() {
                       <Link
                         key={link.href}
                         href={link.href}
+                        target={link.target}
                         onClick={() => setMenuOpen(false)}
                         className={cn(
                           "transition-colors hover:text-primary",
