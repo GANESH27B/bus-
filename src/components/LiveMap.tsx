@@ -1,3 +1,4 @@
+
 'use client';
 
 import {
@@ -9,12 +10,10 @@ import {
 import React, { useState, useEffect, useCallback } from 'react';
 import type { Bus, Stop } from '@/lib/types';
 import { routes } from '@/lib/data';
-import { Button } from './ui/button';
-import { LocateFixed } from 'lucide-react';
 
 interface LiveMapProps {
   buses: Bus[];
-  stops: Stop[];
+  stops?: Stop[];
   center?: google.maps.LatLngLiteral | null;
   zoom?: number;
 }
@@ -48,7 +47,7 @@ const mapOptions = {
   ]
 };
 
-function LiveMap({ buses, stops, center, zoom }: LiveMapProps) {
+function LiveMap({ buses, stops = [], center, zoom }: LiveMapProps) {
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '',
@@ -72,12 +71,10 @@ function LiveMap({ buses, stops, center, zoom }: LiveMapProps) {
         },
         () => {
           console.log('Error: The Geolocation service failed.');
-          // Optionally, inform the user that location could not be fetched
         }
       );
     } else {
       console.log("Error: Your browser doesn't support geolocation.");
-      // Optionally, inform the user
     }
   }, [map]);
 
@@ -97,8 +94,7 @@ function LiveMap({ buses, stops, center, zoom }: LiveMapProps) {
 
   const onLoad = useCallback(function callback(mapInstance: google.maps.Map) {
     setMap(mapInstance);
-    centerOnUser();
-  }, [centerOnUser]);
+  }, []);
 
   const onUnmount = useCallback(function callback(map: google.maps.Map) {
     setMap(null);
@@ -147,12 +143,13 @@ function LiveMap({ buses, stops, center, zoom }: LiveMapProps) {
             position={{ lat: stop.lat, lng: stop.lng }}
             onClick={() => handleMarkerClick(stop)}
             icon={{
-              path: 'M-10,0a10,10 0 1,0 20,0a10,10 0 1,0 -20,0',
-              fillColor: 'hsl(var(--secondary))',
-              fillOpacity: 0.8,
-              strokeColor: 'hsl(var(--secondary-foreground))',
+              path: 'M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z',
+              fillColor: 'hsl(var(--destructive))',
+              fillOpacity: 1,
+              strokeColor: 'hsl(var(--background))',
               strokeWeight: 1,
-              scale: 0.6,
+              scale: 1.5,
+              anchor: new google.maps.Point(12, 24),
             }}
           />
         ))}
