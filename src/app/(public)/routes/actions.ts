@@ -20,7 +20,7 @@ type Service = {
 
 type ActionResult = {
   success: boolean;
-  data?: Service[];
+  data?: any;
   error?: string;
 };
 
@@ -83,4 +83,42 @@ export async function getAvailableServices(
       error: "Could not fetch bus services. The external API may be down or the parameters are incorrect.",
     };
   }
+}
+
+
+export async function trackByServiceNumber(serviceNumber: string): Promise<ActionResult> {
+  // This is a mock implementation.
+  // In a real app, you would call an API to get the status.
+  console.log(`Tracking service number: ${serviceNumber}`);
+  if (!serviceNumber) {
+    return { success: false, error: "Please provide a service number." };
+  }
+  await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate network delay
+  return {
+    success: true,
+    data: {
+      id: serviceNumber,
+      status: "On Time",
+      location: "Approaching Central Station",
+      eta: "15 minutes",
+    },
+  };
+}
+
+export async function trackByVehicleNumber(vehicleNumber: string): Promise<ActionResult> {
+  // This is a mock implementation.
+  console.log(`Tracking vehicle number: ${vehicleNumber}`);
+  if (!vehicleNumber) {
+    return { success: false, error: "Please provide a vehicle number." };
+  }
+  await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate network delay
+  return {
+    success: true,
+    data: {
+      id: vehicleNumber,
+      status: "Active",
+      location: "Westside Mall",
+      route: "202 - Crosstown Connector",
+    },
+  };
 }
