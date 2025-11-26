@@ -1,0 +1,42 @@
+export type Stop = {
+  id: string;
+  name: string;
+  lat: number;
+  lng: number;
+  eta?: string;
+};
+
+export type Route = {
+  id: string;
+  name: string;
+  number: string;
+  stops: Stop[];
+};
+
+export type Bus = {
+  id: string;
+  number: string;
+  routeId: string;
+  lat: number;
+  lng: number;
+  status: 'active' | 'idle' | 'delayed' | 'maintenance';
+  driver: string;
+  lastUpdated: string;
+};
+
+export type Schedule = {
+  routeId: string;
+  timings: string[];
+};
+
+export type TripPlan = {
+  steps: {
+    instruction: string;
+    busNumber?: string;
+    departureStop?: string;
+    arrivalStop?: string;
+    departureTime?: string;
+    arrivalTime?: string;
+  }[];
+  totalTime: string;
+};
