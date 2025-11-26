@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight, Bot, Bus, Clock, Loader2, MapPin, TramFront, Walk } from "lucide-react";
+import { ArrowRight, Bot, Bus, Clock, Loader2, MapPin, PersonStanding, TramFront } from "lucide-react";
 import { Separator } from "./ui/separator";
 
 const formSchema = z.object({
@@ -54,7 +54,7 @@ export function TripPlanner() {
 
   const StepIcon = ({ instruction }: { instruction: string }) => {
     const lowerInstruction = instruction.toLowerCase();
-    if (lowerInstruction.includes("walk")) return <Walk className="h-6 w-6 text-accent" />;
+    if (lowerInstruction.includes("walk")) return <PersonStanding className="h-6 w-6 text-accent" />;
     if (lowerInstruction.includes("bus")) return <Bus className="h-6 w-6 text-accent" />;
     if (lowerInstruction.includes("start")) return <MapPin className="h-6 w-6 text-green-500" />;
     if (lowerInstruction.includes("destination")) return <MapPin className="h-6 w-6 text-red-500" />;
