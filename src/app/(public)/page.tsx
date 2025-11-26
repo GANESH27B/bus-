@@ -1,6 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, Route, Bot } from "lucide-react";
+import { ArrowRight, Route, Bot, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
@@ -11,12 +11,21 @@ const features = [
     title: "Routes & Schedules",
     description: "Browse all available routes, check bus timings, and see all the stops on your journey.",
     href: "/routes",
+    buttonText: "Learn More",
+  },
+  {
+    icon: <MapPin className="h-8 w-8 text-primary" />,
+    title: "Find Nearby Bus Stands",
+    description: "Quickly locate the closest bus stands to your current location with a single click.",
+    href: "https://www.google.com/maps/search/?api=1&query=bus+stand",
+    buttonText: "Find Now",
   },
   {
     icon: <Bot className="h-8 w-8 text-primary" />,
     title: "AI Trip Planner",
     description: "Let our smart assistant plan the best route for you. Get to your destination faster and easier.",
     href: "/trip-planner",
+    buttonText: "Learn More",
   },
 ];
 
@@ -63,7 +72,7 @@ export default function HomePage() {
               Everything you need to navigate the city's bus network with ease.
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
             {features.map((feature) => (
               <Card key={feature.title} className="bg-card text-card-foreground border-border/50 shadow-sm hover:shadow-lg transition-all duration-300 group flex flex-col text-center">
                   <CardContent className="p-8 flex-grow flex flex-col items-center">
@@ -75,8 +84,8 @@ export default function HomePage() {
                   </CardContent>
                   <div className="p-6 pt-0">
                     <Button asChild variant="outline" className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-                        <Link href={feature.href}>
-                            Learn More
+                        <Link href={feature.href} target={feature.href.startsWith('http') ? '_blank' : undefined}>
+                            {feature.buttonText}
                             <ArrowRight className="ml-2 h-4 w-4 transform transition-transform group-hover:translate-x-1" />
                         </Link>
                     </Button>
