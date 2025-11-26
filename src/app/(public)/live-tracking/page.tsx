@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useMemo } from 'react';
-import Image from "next/image";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,8 +9,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { buses, routes } from "@/lib/data";
 import type { Bus } from "@/lib/types";
-import { PlaceHolderImages } from "@/lib/placeholder-images";
-import { BusFront, Clock, MapPin, Search } from "lucide-react";
+import { Clock, MapPin, Search } from "lucide-react";
+import LiveMap from '@/components/LiveMap';
 
 const getEta = (index: number) => `${2 + index * 3} min`;
 
@@ -19,7 +18,6 @@ export default function LiveTrackingPage() {
   const [isLowBandwidth, setIsLowBandwidth] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedRoute, setSelectedRoute] = useState("all");
-  const mapImage = PlaceHolderImages.find(p => p.id === 'map-background');
 
   const filteredBuses = useMemo(() => {
     return buses.filter(bus => {
@@ -125,27 +123,7 @@ export default function LiveTrackingPage() {
           ) : (
             <Card className="overflow-hidden">
                 <CardContent className="p-0">
-                    <div className="relative aspect-[4/3] w-full bg-muted">
-                        {mapImage && (
-                            <Image
-                                src={mapImage.imageUrl}
-                                alt={mapImage.description}
-                                layout="fill"
-                                objectFit="cover"
-                                data-ai-hint={mapImage.imageHint}
-                            />
-                        )}
-                        {filteredBuses.map((bus, index) => (
-                           <div key={bus.id} className="absolute" style={{ top: `${20 + index * 15}%`, left: `${25 + index * 10}%`, transform: 'translate(-50%, -50%)' }}>
-                               <div className="relative group">
-                                   <BusFront className="h-8 w-8 text-primary drop-shadow-lg" />
-                                   <div className="absolute bottom-full mb-2 w-max bg-card text-card-foreground text-sm rounded-md px-2 py-1 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap -translate-x-1/2 left-1/2">
-                                       Bus {bus.number}<br/>Route: {routes.find(r => r.id === bus.routeId)?.number}
-                                   </div>
-                               </div>
-                           </div>
-                        ))}
-                    </div>
+                    <LiveMap buses={filteredBuses} />
                 </CardContent>
             </Card>
           )}
