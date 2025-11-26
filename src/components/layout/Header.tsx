@@ -42,9 +42,6 @@ export default function Header() {
           ))}
         </nav>
         <div className="flex flex-1 items-center justify-end">
-          <Button asChild variant="outline" className="hidden md:flex">
-            <Link href="/admin/dashboard">Admin Portal</Link>
-          </Button>
           <Sheet open={isMenuOpen} onOpenChange={setMenuOpen}>
             <SheetTrigger asChild>
               <Button
@@ -79,9 +76,6 @@ export default function Header() {
                       {link.label}
                     </Link>
                   ))}
-                  <Button asChild variant="outline" className="mt-4 justify-start w-fit">
-                    <Link href="/admin/dashboard" onClick={() => setMenuOpen(false)}>Admin Portal</Link>
-                  </Button>
                 </div>
               </div>
             </SheetContent>
