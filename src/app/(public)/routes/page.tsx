@@ -31,13 +31,12 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Loader2, Search, Bus, CalendarIcon, FileDown, Ticket, MapPin } from 'lucide-react';
+import { Loader2, Search, Bus, CalendarIcon, FileDown, Ticket } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import * as XLSX from 'xlsx';
-import Link from 'next/link';
 import LiveMap from '@/components/LiveMap';
 import type { Bus as BusType } from '@/lib/types';
 
@@ -165,7 +164,7 @@ export default function RoutesPage() {
     );
 
     if (href) {
-        return <Link href={href}>{content}</Link>
+        return <a href={href}>{content}</a>
     }
 
     return <button onClick={action} className="w-full h-full">{content}</button>;
@@ -184,11 +183,10 @@ export default function RoutesPage() {
       </div>
 
       <Tabs defaultValue="search" className="w-full" onValueChange={() => { setTrackingResult(null); setError(null); setSearched(false); setServices(null)}}>
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="search"><Search className="mr-2 h-4 w-4"/>Search Buses</TabsTrigger>
           <TabsTrigger value="track-service"><Ticket className="mr-2 h-4 w-4"/>Track by Service</TabsTrigger>
           <TabsTrigger value="track-vehicle"><Bus className="mr-2 h-4 w-4"/>Track by Vehicle</TabsTrigger>
-          <TabsTrigger value="nearby-stops" asChild><Link href="/live-tracking" className="flex items-center justify-center"><MapPin className="mr-2 h-4 w-4"/>Nearby Stops</Link></TabsTrigger>
         </TabsList>
 
         {/* SEARCH BUSES TAB */}
