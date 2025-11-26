@@ -37,15 +37,18 @@ export async function getAvailableServices(
   const url = "https://www.apsrtconline.in/oprs-web/avail/services.do";
 
   try {
-    // This is constructed to mimic a form submission from a browser
-    const body = `sourceCity=${from}&destinationCity=${to}&journeyDate=${date}`;
+    const body = new URLSearchParams({
+        sourceCity: from,
+        destinationCity: to,
+        journeyDate: date,
+    }).toString();
 
     const res = await fetch(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
-        // Adding a Referer header can sometimes help with APIs that expect browser-like behavior
-        "Referer": "https://www.apsrtconline.in/oprs-web/guest/home.do"
+        "Referer": "https://www.apsrtconline.in/oprs-web/guest/home.do",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
       },
       body: body,
     });
