@@ -1,3 +1,4 @@
+
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, Route, Bot, MapPin } from "lucide-react";
@@ -17,7 +18,7 @@ const features = [
     icon: <MapPin className="h-8 w-8 text-primary" />,
     title: "Find Nearby Bus Stands",
     description: "Quickly locate the closest bus stands to your current location with a single click.",
-    href: "/nearby-stops",
+    href: "https://www.google.com/maps/search/?api=1&query=bus+stand",
     buttonText: "Find Now",
   },
   {

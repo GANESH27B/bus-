@@ -1,9 +1,10 @@
+
 "use client";
 
 import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BusFront, Menu } from "lucide-react";
+import { BusFront, Menu, MapPin, MapSearch } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -13,7 +14,7 @@ const navLinks = [
   { href: "/", label: "Home" },
   { href: "/routes", label: "Routes" },
   { href: "/trip-planner", label: "Trip Planner" },
-  { href: "/nearby-stops", label: "Nearby Stops" },
+  { href: "https://www.google.com/maps/search/?api=1&query=bus+stand", label: "Nearby Stops", target: "_blank" },
   { href: "/map-search", label: "Map Search" },
 ];
 
@@ -46,6 +47,7 @@ export default function Header() {
             <Link
               key={link.href}
               href={link.href}
+              target={link.target}
               className={cn(
                 "transition-colors text-primary-foreground/80 hover:text-primary-foreground",
                 pathname === link.href && "text-primary-foreground font-semibold"
@@ -81,6 +83,7 @@ export default function Header() {
                       <Link
                         key={link.href}
                         href={link.href}
+                        target={link.target}
                         onClick={() => setMenuOpen(false)}
                         className={cn(
                           "transition-colors hover:text-primary",
