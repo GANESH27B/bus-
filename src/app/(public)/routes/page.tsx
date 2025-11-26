@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
+import { format } from 'date-fns';
 import { getAvailableServices } from './actions';
 import {
   Form,
@@ -30,13 +31,16 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Loader2, Search, Bus } from 'lucide-react';
+import { Loader2, Search, Bus, CalendarIcon } from 'lucide-react';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
+import { cn } from '@/lib/utils';
 
 const formSchema = z.object({
   from: z.string().min(3, { message: 'Please enter a valid location.' }),
   to: z.string().min(3, { message: 'Please enter a valid location.' }),
-  date: z.string().regex(/^\d{2}\/\d{2}\/\d{4}$/, {
-    message: 'Date must be in DD/MM/YYYY format.',
+  date: z.date({
+    required_error: "A date is required.",
   }),
 });
 
@@ -58,9 +62,9 @@ export default function RoutesPage() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      from: '',
-      to: '',
-      date: new Date().toLocaleDateString('en-GB'),
+      from: 'VIJAYAWADA',
+      to: 'HYDERABAD',
+      date: new Date(),
     },
   });
 
@@ -70,7 +74,12 @@ export default function RoutesPage() {
     setServices(null);
     setSearched(true);
 
-    const result = await getAvailableServices(values);
+    const formattedValues = {
+        ...values,
+        date: format(values.date, "dd/MM/yyyy"),
+    }
+
+    const result = await getAvailableServices(formattedValues);
 
     if (result.success && result.data) {
       setServices(result.data);
@@ -131,11 +140,39 @@ export default function RoutesPage() {
                 control={form.control}
                 name="date"
                 render={({ field }) => (
-                  <FormItem>
+                  <FormItem className="flex flex-col">
                     <FormLabel>Date</FormLabel>
-                    <FormControl>
-                      <Input placeholder="DD/MM/YYYY" {...field} />
-                    </FormControl>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant={"outline"}
+                            className={cn(
+                              "w-full pl-3 text-left font-normal",
+                              !field.value && "text-muted-foreground"
+                            )}
+                          >
+                            {field.value ? (
+                              format(field.value, "PPP")
+                            ) : (
+                              <span>Pick a date</span>
+                            )}
+                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={field.value}
+                          onSelect={field.onChange}
+                          disabled={(date) =>
+                            date < new Date(new Date().setHours(0,0,0,0))
+                          }
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
                     <FormMessage />
                   </FormItem>
                 )}
