@@ -25,7 +25,6 @@ export default function Header() {
     setIsMounted(true);
   }, []);
 
-
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-primary text-primary-foreground">
       <div className="container flex h-14 items-center">
