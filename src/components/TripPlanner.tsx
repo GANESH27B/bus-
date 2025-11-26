@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -36,7 +37,7 @@ export function TripPlanner() {
   const [tripPlan, setTripPlan] = useState<TripPlan | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [isListening, setIsListening] = useState(false);
+  const [isListening, setIsListening] = useState(isListening);
   const [hasSpeechSupport, setHasSpeechSupport] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -253,7 +254,7 @@ export function TripPlanner() {
                       <div className="flex-grow pb-4">
                         <p className="font-semibold">{step.instruction}</p>
                         {step.busNumber && (
-                           <div className="text-sm text-muted-foreground mt-2 space-y-2 p-3 bg-secondary/50 rounded-md">
+                           <div className="text-sm text-muted-foreground mt-2 space-y-2 p-3 bg-muted/50 rounded-md">
                                 <p className="flex items-center"><Bus className="w-4 h-4 mr-2"/> <strong>Bus {step.busNumber}</strong></p>
                                 {step.departureTime && (<p className="flex items-center"><Clock className="w-4 h-4 mr-2"/>Time: <strong>{step.departureTime}</strong></p>)}
                            </div>
