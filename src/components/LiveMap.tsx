@@ -101,7 +101,7 @@ function LiveMap({ buses }: LiveMapProps) {
               fillColor: 'hsl(var(--primary))',
               fillOpacity: 1,
               strokeWeight: 2,
-              strokeColor: '#ffffff',
+              strokeColor: 'hsl(var(--primary-foreground))',
               rotation: 0,
             }}
           />
@@ -116,7 +116,7 @@ function LiveMap({ buses }: LiveMapProps) {
               scale: 8,
               fillColor: 'hsl(var(--accent))',
               fillOpacity: 1,
-              strokeColor: 'white',
+              strokeColor: 'hsl(var(--accent-foreground))',
               strokeWeight: 2
             }}
           />

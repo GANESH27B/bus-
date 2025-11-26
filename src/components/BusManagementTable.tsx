@@ -46,11 +46,11 @@ import { buses as mockBuses, routes as mockRoutes } from "@/lib/data";
 const StatusBadge = ({ status }: { status: string }) => {
   switch (status) {
     case 'active':
-      return <Badge className="bg-green-500/20 text-green-700 hover:bg-green-500/30">Active</Badge>;
+      return <Badge className="border-transparent bg-green-500/20 text-green-700 hover:bg-green-500/30">Active</Badge>;
     case 'delayed':
       return <Badge variant="destructive">Delayed</Badge>;
     case 'idle':
-      return <Badge className="bg-yellow-500/20 text-yellow-700 hover:bg-yellow-500/30">Idle</Badge>;
+      return <Badge className="border-transparent bg-yellow-500/20 text-yellow-700 hover:bg-yellow-500/30">Idle</Badge>;
     case 'maintenance':
       return <Badge variant="secondary">Maintenance</Badge>;
     default:
