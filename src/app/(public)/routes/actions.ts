@@ -1,3 +1,4 @@
+
 "use server";
 
 import * as z from "zod";
@@ -23,13 +24,6 @@ type ActionResult = {
   error?: string;
 };
 
-// A simple utility to format duration from minutes to "Xh Ym"
-function formatDuration(minutes: number): string {
-    const hours = Math.floor(minutes / 60);
-    const mins = minutes % 60;
-    return `${hours}h ${mins}m`;
-}
-
 export async function getAvailableServices(
   values: z.infer<typeof formSchema>
 ): Promise<ActionResult> {
@@ -43,19 +37,22 @@ export async function getAvailableServices(
   const url = "https://www.apsrtconline.in/oprs-web/avail/services.do";
 
   try {
+    // This is constructed to mimic a form submission from a browser
+    const body = `sourceCity=${from}&destinationCity=${to}&journeyDate=${date}`;
+
     const res = await fetch(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
+        // Adding a Referer header can sometimes help with APIs that expect browser-like behavior
+        "Referer": "https://www.apsrtconline.in/oprs-web/guest/home.do"
       },
-      body: new URLSearchParams({
-          sourceCity: from,
-          destinationCity: to,
-          journeyDate: date,
-      })
+      body: body,
     });
     
     if (!res.ok) {
+        const errorBody = await res.text();
+        console.error("APSRTC API Error:", errorBody);
         throw new Error(`API request failed with status: ${res.status}`);
     }
 
@@ -65,13 +62,12 @@ export async function getAvailableServices(
         return { success: true, data: [] };
     }
 
-    // Transform the API data into the format our frontend expects
     const formattedServices: Service[] = data.serviceAvailList.map((service: any) => ({
       serviceName: service.serviceName,
       serviceId: service.serviceId,
       departureTime: service.departureTime,
       arrivalTime: service.arrivalTime,
-      duration: service.travelTime, // Assuming travelTime is what we need for duration
+      duration: service.travelTime,
       seatsAvailable: service.seatsAvailable,
     }));
     
