@@ -43,12 +43,12 @@ export default function HomePage() {
                 data-ai-hint={heroImage.imageHint}
             />
         )}
-        <div className="absolute inset-0 bg-primary/70" />
+        <div className="absolute inset-0 bg-black/50" />
         <div className="relative z-10 p-4">
           <h1 className="text-4xl md:text-6xl font-bold tracking-tight font-headline">
             Welcome to SmartBus Connect
           </h1>
-          <p className="mt-4 max-w-2xl mx-auto text-lg md:text-xl text-primary-foreground/90">
+          <p className="mt-4 max-w-2xl mx-auto text-lg md:text-xl text-white/90">
             Your city's transit, simplified. Real-time tracking, ETAs, and trip planning at your fingertips.
           </p>
           <div className="mt-8 flex justify-center gap-4">
@@ -106,7 +106,7 @@ export default function HomePage() {
                 data-ai-hint={ctaImage.imageHint}
             />
         )}
-        <div className="absolute inset-0 bg-primary/80" />
+        <div className="absolute inset-0 bg-black/60" />
         <div className="container relative z-10 mx-auto px-4 text-center">
           <h2 className="text-3xl md:text-4xl font-bold font-headline">Ready to Get Started?</h2>
           <p className="mt-2 text-lg text-primary-foreground/90 max-w-2xl mx-auto">
