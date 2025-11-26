@@ -19,7 +19,7 @@ const chartData = [
 const chartConfig = {
   buses: {
     label: "Buses",
-    color: "hsl(var(--accent))",
+    color: "hsl(var(--foreground))",
   },
 };
 

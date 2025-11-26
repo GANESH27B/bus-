@@ -56,8 +56,8 @@ export function TripPlanner() {
     const lowerInstruction = instruction.toLowerCase();
     if (lowerInstruction.includes("walk")) return <PersonStanding className="h-6 w-6 text-accent" />;
     if (lowerInstruction.includes("bus")) return <Bus className="h-6 w-6 text-accent" />;
-    if (lowerInstruction.includes("start")) return <MapPin className="h-6 w-6 text-green-500" />;
-    if (lowerInstruction.includes("destination")) return <MapPin className="h-6 w-6 text-red-500" />;
+    if (lowerInstruction.includes("start")) return <MapPin className="h-6 w-6 text-foreground" />;
+    if (lowerInstruction.includes("destination")) return <MapPin className="h-6 w-6 text-destructive" />;
     return <TramFront className="h-6 w-6 text-accent" />;
   }
 
