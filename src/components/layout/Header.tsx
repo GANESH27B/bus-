@@ -32,15 +32,14 @@ export default function Header() {
   return (
     <header className={cn(
         "sticky top-0 z-50 w-full transition-all duration-300",
-        isScrolled ? "bg-background/80 shadow-md backdrop-blur-sm" : "bg-transparent"
+        isScrolled ? "bg-primary/90 shadow-md backdrop-blur-sm" : "bg-transparent"
     )}>
       <div className="container flex h-16 items-center">
         <Link href="/" className="mr-6 flex items-center space-x-2">
-          <BusFront className={cn("h-6 w-6", isScrolled ? 'text-primary' : 'text-primary-foreground')} />
-          <span className={cn(
-              "font-bold sm:inline-block",
-              isScrolled ? "text-foreground" : "text-primary-foreground"
-          )}>SmartBus Connect</span>
+          <BusFront className="h-6 w-6 text-primary-foreground" />
+          <span className="font-bold sm:inline-block text-primary-foreground">
+            SmartBus Connect
+          </span>
         </Link>
         <nav className="hidden items-center space-x-6 text-sm font-medium md:flex">
           {navLinks.map((link) => (
@@ -48,9 +47,8 @@ export default function Header() {
               key={link.href}
               href={link.href}
               className={cn(
-                "transition-colors hover:text-primary",
-                isScrolled ? "text-foreground" : "text-primary-foreground/80 hover:text-primary-foreground",
-                pathname === link.href && (isScrolled ? "text-primary" : "text-primary-foreground")
+                "transition-colors text-primary-foreground/80 hover:text-primary-foreground",
+                pathname === link.href && "text-primary-foreground font-semibold"
               )}
             >
               {link.label}
@@ -62,10 +60,7 @@ export default function Header() {
               <SheetTrigger asChild>
                 <Button
                   variant="ghost"
-                  className={cn(
-                      "px-2 text-base hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0",
-                      isScrolled ? "text-foreground hover:bg-accent" : "text-primary-foreground hover:bg-white/20"
-                  )}
+                  className="px-2 text-base text-primary-foreground hover:bg-white/20 focus-visible:bg-white/20"
                 >
                   <Menu className="h-6 w-6" />
                   <span className="sr-only">Toggle Menu</span>
