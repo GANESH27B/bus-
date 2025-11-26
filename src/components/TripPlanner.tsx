@@ -57,7 +57,7 @@ export function TripPlanner() {
     if (lowerInstruction.includes("walk")) return <PersonStanding className="h-6 w-6 text-accent" />;
     if (lowerInstruction.includes("bus")) return <Bus className="h-6 w-6 text-accent" />;
     if (lowerInstruction.includes("start")) return <MapPin className="h-6 w-6 text-foreground" />;
-    if (lowerInstruction.includes("destination")) return <MapPin className="h-6 w-6 text-destructive" />;
+    if (lowerInstruction.includes("destination") || lowerInstruction.includes("arrive")) return <MapPin className="h-6 w-6 text-destructive" />;
     return <TramFront className="h-6 w-6 text-accent" />;
   }
 
@@ -137,7 +137,7 @@ export function TripPlanner() {
             {error && <p className="text-destructive">{error}</p>}
             {tripPlan && (
               <div className="space-y-6">
-                 <div className="flex justify-between items-center bg-secondary p-4 rounded-lg">
+                 <div className="flex justify-between items-center bg-muted/50 dark:bg-secondary p-4 rounded-lg">
                     <h3 className="text-lg font-semibold">Total Estimated Time</h3>
                     <div className="flex items-center gap-2 text-xl font-bold text-primary">
                         <Clock className="h-6 w-6"/>
@@ -161,8 +161,7 @@ export function TripPlanner() {
                         {step.busNumber && (
                            <div className="text-sm text-muted-foreground mt-2 space-y-2 p-3 bg-secondary/50 rounded-md">
                                 <p className="flex items-center"><Bus className="w-4 h-4 mr-2"/> <strong>Bus {step.busNumber}</strong></p>
-                                <p className="flex items-center"><MapPin className="w-4 h-4 mr-2"/>From: <strong>{step.departureStop}</strong> at {step.departureTime}</p>
-                                <p className="flex items-center"><MapPin className="w-4 h-4 mr-2"/>To: <strong>{step.arrivalStop}</strong> at {step.arrivalTime}</p>
+                                {step.departureTime && (<p className="flex items-center"><Clock className="w-4 h-4 mr-2"/>Time: <strong>{step.departureTime}</strong></p>)}
                            </div>
                         )}
                       </div>

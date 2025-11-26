@@ -2,6 +2,7 @@
 
 import * as z from "zod";
 import type { TripPlan } from "@/lib/types";
+import { aiTripPlanner } from "@/ai/ai-trip-planner";
 
 const formSchema = z.object({
   start: z.string(),
@@ -20,36 +21,36 @@ export async function planTripAction(values: z.infer<typeof formSchema>): Promis
   if (!validatedFields.success) {
     return { success: false, error: "Invalid input." };
   }
+  
+  try {
+    const plan = await aiTripPlanner({
+        startLocation: validatedFields.data.start,
+        destination: validatedFields.data.destination,
+    });
 
-  // Simulate AI processing and network delay
-  await new Promise(resolve => setTimeout(resolve, 1500));
+    // The AI output needs to be mapped to the TripPlan type.
+    // This is a simplified mapping. A more robust implementation might
+    // involve more complex parsing or a more structured AI output.
+    const tripPlan: TripPlan = {
+        totalTime: plan.eta,
+        steps: plan.routes.map((route, index) => {
+            const schedule = plan.schedules[index] || "Not available";
+            
+            // A simple heuristic to check if the step is a bus ride
+            if (route.toLowerCase().includes('bus')) {
+                return {
+                    instruction: route,
+                    busNumber: route.match(/bus (\w+)/i)?.[1] || "N/A",
+                    departureTime: schedule,
+                }
+            }
+            return { instruction: route };
+        })
+    };
 
-  // Mock AI response
-  const mockPlan: TripPlan = {
-    totalTime: "25 minutes",
-    steps: [
-      {
-        instruction: `Start at ${validatedFields.data.start}`,
-      },
-      {
-        instruction: "Walk 2 minutes to Grand Park station.",
-      },
-      {
-        instruction: "Take Bus 101 towards City Hall.",
-        busNumber: "101",
-        departureStop: "Grand Park",
-        arrivalStop: "Museum of Modern Art",
-        departureTime: "10:05 AM",
-        arrivalTime: "10:15 AM",
-      },
-      {
-        instruction: `Walk 5 minutes to your destination, ${validatedFields.data.destination}.`,
-      },
-      {
-        instruction: `You have arrived at ${validatedFields.data.destination}.`
-      }
-    ],
-  };
-
-  return { success: true, data: mockPlan };
+    return { success: true, data: tripPlan };
+  } catch (e: any) {
+    console.error(e);
+    return { success: false, error: "Failed to generate trip plan. " + e.message };
+  }
 }
