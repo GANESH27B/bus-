@@ -13,7 +13,7 @@ const navLinks = [
   { href: "/", label: "Home" },
   { href: "/routes", label: "Routes" },
   { href: "/trip-planner", label: "Trip Planner" },
-  { href: "https://www.google.com/maps/search/?api=1&query=bus+stand", label: "Nearby Stops", target: "_blank" },
+  { href: "/nearby-stops", label: "Nearby Stops" },
 ];
 
 export default function Header() {

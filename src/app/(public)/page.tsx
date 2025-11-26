@@ -17,7 +17,7 @@ const features = [
     icon: <MapPin className="h-8 w-8 text-primary" />,
     title: "Find Nearby Bus Stands",
     description: "Quickly locate the closest bus stands to your current location with a single click.",
-    href: "https://www.google.com/maps/search/?api=1&query=bus+stand",
+    href: "/nearby-stops",
     buttonText: "Find Now",
   },
   {
