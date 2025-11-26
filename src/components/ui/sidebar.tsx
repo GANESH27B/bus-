@@ -88,6 +88,12 @@ const SidebarProvider = React.forwardRef<
       },
       [setOpenProp, open]
     )
+    const [isMounted, setIsMounted] = React.useState(false);
+
+    React.useEffect(() => {
+        setIsMounted(true);
+    }, []);
+
 
     // Helper to toggle the sidebar.
     const toggleSidebar = React.useCallback(() => {
@@ -121,12 +127,12 @@ const SidebarProvider = React.forwardRef<
         state,
         open,
         setOpen,
-        isMobile,
+        isMobile: isMobile && isMounted,
         openMobile,
         setOpenMobile,
         toggleSidebar,
       }),
-      [state, open, setOpen, isMobile, openMobile, setOpenMobile, toggleSidebar]
+      [state, open, setOpen, isMobile, openMobile, setOpenMobile, toggleSidebar, isMounted]
     )
 
     return (
@@ -761,3 +767,5 @@ export {
   SidebarTrigger,
   useSidebar,
 }
+
+    
