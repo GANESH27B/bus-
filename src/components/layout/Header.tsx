@@ -15,6 +15,7 @@ const navLinks = [
   { href: "/routes", label: "Routes" },
   { href: "/trip-planner", label: "Trip Planner" },
   { href: "/map-search", label: "Map Search" },
+  { href: "/nearby-stops", label: "Nearby Stops" },
 ];
 
 export default function Header() {

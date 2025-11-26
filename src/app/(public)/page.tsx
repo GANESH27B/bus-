@@ -23,7 +23,7 @@ const features = [
   },
   {
     icon: <MapPin className="h-8 w-8 text-primary" />,
-    title: "Live Map",
+    title: "Nearby Stops",
     description: "See all bus stops and find your nearest one on an interactive map.",
     href: "/nearby-stops",
     buttonText: "Learn More",
