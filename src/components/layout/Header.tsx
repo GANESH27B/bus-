@@ -19,6 +19,11 @@ const navLinks = [
 export default function Header() {
   const [isMenuOpen, setMenuOpen] = React.useState(false);
   const pathname = usePathname();
+  const [isMounted, setIsMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -42,44 +47,46 @@ export default function Header() {
           ))}
         </nav>
         <div className="flex flex-1 items-center justify-end md:hidden">
-          <Sheet open={isMenuOpen} onOpenChange={setMenuOpen}>
-            <SheetTrigger asChild>
-              <Button
-                variant="ghost"
-                className="px-2 text-base hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
-              >
-                <Menu className="h-6 w-6" />
-                <span className="sr-only">Toggle Menu</span>
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="pr-0">
-              <Link
-                href="/"
-                className="mr-6 flex items-center space-x-2"
-                onClick={() => setMenuOpen(false)}
-              >
-                <BusFront className="h-6 w-6 text-primary" />
-                <span className="font-bold">SmartBus Connect</span>
-              </Link>
-              <div className="my-4 h-[calc(100vh-8rem)] pb-10 pl-6">
-                <div className="flex flex-col space-y-3">
-                  {navLinks.map((link) => (
-                    <Link
-                      key={link.href}
-                      href={link.href}
-                      onClick={() => setMenuOpen(false)}
-                      className={cn(
-                        "transition-colors hover:text-foreground/80",
-                        pathname === link.href ? "text-foreground" : "text-foreground/60"
-                      )}
-                    >
-                      {link.label}
-                    </Link>
-                  ))}
+          {isMounted && (
+            <Sheet open={isMenuOpen} onOpenChange={setMenuOpen}>
+              <SheetTrigger asChild>
+                <Button
+                  variant="ghost"
+                  className="px-2 text-base hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
+                >
+                  <Menu className="h-6 w-6" />
+                  <span className="sr-only">Toggle Menu</span>
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="pr-0">
+                <Link
+                  href="/"
+                  className="mr-6 flex items-center space-x-2"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  <BusFront className="h-6 w-6 text-primary" />
+                  <span className="font-bold">SmartBus Connect</span>
+                </Link>
+                <div className="my-4 h-[calc(100vh-8rem)] pb-10 pl-6">
+                  <div className="flex flex-col space-y-3">
+                    {navLinks.map((link) => (
+                      <Link
+                        key={link.href}
+                        href={link.href}
+                        onClick={() => setMenuOpen(false)}
+                        className={cn(
+                          "transition-colors hover:text-foreground/80",
+                          pathname === link.href ? "text-foreground" : "text-foreground/60"
+                        )}
+                      >
+                        {link.label}
+                      </Link>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            </SheetContent>
-          </Sheet>
+              </SheetContent>
+            </Sheet>
+          )}
         </div>
       </div>
     </header>
