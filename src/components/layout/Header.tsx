@@ -14,7 +14,6 @@ const navLinks = [
   { href: "/", label: "Home" },
   { href: "/routes", label: "Routes" },
   { href: "/trip-planner", label: "Trip Planner" },
-  { href: "/nearby-stops", label: "Live Map" },
   { href: "/map-search", label: "Map Search" },
 ];
 

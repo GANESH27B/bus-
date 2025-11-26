@@ -15,19 +15,19 @@ const features = [
     buttonText: "Learn More",
   },
   {
-    icon: <MapPin className="h-8 w-8 text-primary" />,
-    title: "Live Map",
-    description: "See all bus stops on an interactive map and find the ones closest to your current location.",
-    href: "/nearby-stops",
-    buttonText: "View Map",
-  },
-  {
     icon: <Bot className="h-8 w-8 text-primary" />,
     title: "AI Trip Planner",
     description: "Let our smart assistant plan the best route for you. Get to your destination faster and easier.",
     href: "/trip-planner",
     buttonText: "Learn More",
   },
+  {
+    icon: <MapPin className="h-8 w-8 text-primary" />,
+    title: "Live Map",
+    description: "See all bus stops and find your nearest one on an interactive map.",
+    href: "/nearby-stops",
+    buttonText: "Learn More",
+  }
 ];
 
 export default function HomePage() {
