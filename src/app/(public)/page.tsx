@@ -43,7 +43,6 @@ export default function HomePage() {
                 data-ai-hint={heroImage.imageHint}
             />
         )}
-        <div className="absolute inset-0 bg-black/50" />
         <div className="relative z-10 p-4">
           <h1 className="text-4xl md:text-6xl font-bold tracking-tight font-headline">
             Welcome to SmartBus Connect
@@ -63,13 +62,6 @@ export default function HomePage() {
 
       <section className="py-12 md:py-20">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold font-headline">Rethink Your Commute</h2>
-            <p className="mt-2 text-lg text-muted-foreground max-w-3xl mx-auto">
-              SmartBus Connect offers powerful tools to make your public transit experience seamless and stress-free.
-            </p>
-          </div>
-
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {features.map((feature) => (
               <Card key={feature.title} className="flex flex-col hover:shadow-lg transition-shadow duration-300">
