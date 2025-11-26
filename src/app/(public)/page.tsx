@@ -10,7 +10,8 @@ const features = [
     icon: <Map className="h-8 w-8 text-primary" />,
     title: "Live Bus Tracking",
     description: "See exactly where your bus is on an interactive map. No more guessing, no more waiting in the dark.",
-    href: "/live-tracking",
+    href: "https://www.google.com/maps",
+    target: "_blank",
   },
   {
     icon: <Route className="h-8 w-8 text-primary" />,
@@ -80,7 +81,7 @@ export default function HomePage() {
                   </CardContent>
                   <div className="p-6 pt-0">
                     <Button asChild variant="outline" className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-                        <Link href={feature.href}>
+                        <Link href={feature.href} target={feature.target}>
                             Learn More
                             <ArrowRight className="ml-2 h-4 w-4 transform transition-transform group-hover:translate-x-1" />
                         </Link>
