@@ -19,18 +19,28 @@ const navLinks = [
 export default function Header() {
   const pathname = usePathname();
   const [isMenuOpen, setMenuOpen] = React.useState(false);
-  const [isMounted, setIsMounted] = React.useState(false);
+  const [isScrolled, setIsScrolled] = React.useState(false);
 
   React.useEffect(() => {
-    setIsMounted(true);
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-primary text-primary-foreground">
-      <div className="container flex h-14 items-center">
+    <header className={cn(
+        "sticky top-0 z-50 w-full transition-all duration-300",
+        isScrolled ? "bg-background/80 shadow-md backdrop-blur-sm" : "bg-transparent"
+    )}>
+      <div className="container flex h-16 items-center">
         <Link href="/" className="mr-6 flex items-center space-x-2">
-          <BusFront className="h-6 w-6" />
-          <span className="font-bold sm:inline-block">SmartBus Connect</span>
+          <BusFront className={cn("h-6 w-6", isScrolled ? 'text-primary' : 'text-primary-foreground')} />
+          <span className={cn(
+              "font-bold sm:inline-block",
+              isScrolled ? "text-foreground" : "text-primary-foreground"
+          )}>SmartBus Connect</span>
         </Link>
         <nav className="hidden items-center space-x-6 text-sm font-medium md:flex">
           {navLinks.map((link) => (
@@ -38,8 +48,9 @@ export default function Header() {
               key={link.href}
               href={link.href}
               className={cn(
-                "transition-colors hover:text-primary-foreground/80",
-                pathname === link.href ? "text-primary-foreground" : "text-primary-foreground/60"
+                "transition-colors hover:text-primary",
+                isScrolled ? "text-foreground" : "text-primary-foreground/80 hover:text-primary-foreground",
+                pathname === link.href && (isScrolled ? "text-primary" : "text-primary-foreground")
               )}
             >
               {link.label}
@@ -47,36 +58,38 @@ export default function Header() {
           ))}
         </nav>
         <div className="flex flex-1 items-center justify-end md:hidden">
-          {isMounted ? (
             <Sheet open={isMenuOpen} onOpenChange={setMenuOpen}>
               <SheetTrigger asChild>
                 <Button
                   variant="ghost"
-                  className="px-2 text-base hover:bg-primary/80 focus-visible:bg-primary/80 focus-visible:ring-0 focus-visible:ring-offset-0"
+                  className={cn(
+                      "px-2 text-base hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0",
+                      isScrolled ? "text-foreground hover:bg-accent" : "text-primary-foreground hover:bg-white/20"
+                  )}
                 >
                   <Menu className="h-6 w-6" />
                   <span className="sr-only">Toggle Menu</span>
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="pr-0 bg-primary text-primary-foreground border-primary-foreground/20">
+              <SheetContent side="left" className="pr-0 bg-background text-foreground border-border">
                 <Link
                   href="/"
-                  className="mr-6 flex items-center space-x-2"
+                  className="mr-6 flex items-center space-x-2 px-6"
                   onClick={() => setMenuOpen(false)}
                 >
-                  <BusFront className="h-6 w-6" />
+                  <BusFront className="h-6 w-6 text-primary" />
                   <span className="font-bold">SmartBus Connect</span>
                 </Link>
-                <div className="my-4 h-[calc(100vh-8rem)] pb-10 pl-6">
-                  <div className="flex flex-col space-y-3">
+                <div className="my-4 h-[calc(100vh-8rem)] pb-10">
+                  <div className="flex flex-col space-y-3 px-6">
                     {navLinks.map((link) => (
                       <Link
                         key={link.href}
                         href={link.href}
                         onClick={() => setMenuOpen(false)}
                         className={cn(
-                          "transition-colors hover:text-primary-foreground/80",
-                          pathname === link.href ? "text-primary-foreground font-semibold" : "text-primary-foreground/60"
+                          "transition-colors hover:text-primary",
+                          pathname === link.href ? "text-primary font-semibold" : "text-muted-foreground"
                         )}
                       >
                         {link.label}
@@ -86,7 +99,6 @@ export default function Header() {
                 </div>
               </SheetContent>
             </Sheet>
-          ) : <div className="h-9 w-9" />}
         </div>
       </div>
     </header>
