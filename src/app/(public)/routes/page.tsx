@@ -31,7 +31,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Loader2, Search, Bus, CalendarIcon, FileDown, Ticket } from 'lucide-react';
+import { Loader2, Search, Bus, CalendarIcon, FileDown, Ticket, PersonStanding, TramFront, Clock, Milestone } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar } from '@/components/ui/calendar';
 import { cn } from '@/lib/utils';
@@ -39,6 +39,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import * as XLSX from 'xlsx';
 import LiveMap from '@/components/LiveMap';
 import type { Bus as BusType } from '@/lib/types';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 
 const searchSchema = z.object({
@@ -57,13 +58,17 @@ const trackVehicleSchema = z.object({
     vehicleNumber: z.string().min(3, { message: 'Please enter a valid vehicle number.' }),
 });
 
+type Step = {
+    instruction: string;
+    travelMode: string;
+    duration: string;
+    distance: string;
+};
+
 type Service = {
-  serviceName: string;
-  serviceId: string;
-  departureTime: string;
-  arrivalTime: string;
-  duration: string;
-  seatsAvailable: string;
+    duration: string;
+    distance: string;
+    steps: Step[];
 };
 
 export default function RoutesPage() {
@@ -76,8 +81,8 @@ export default function RoutesPage() {
   const searchForm = useForm<z.infer<typeof searchSchema>>({
     resolver: zodResolver(searchSchema),
     defaultValues: {
-      from: 'VIJAYAWADA',
-      to: 'HYDERABAD',
+      from: 'Vijayawada, AP, India',
+      to: 'Hyderabad, Telangana, India',
       date: new Date(),
     },
   });
@@ -105,7 +110,7 @@ export default function RoutesPage() {
     
     const formattedValues = {
         ...values,
-        date: format(values.date, "dd/MM/yyyy"),
+        date: values.date.toISOString(),
     }
 
     const result = await getAvailableServices(formattedValues);
@@ -142,34 +147,21 @@ export default function RoutesPage() {
 
   const exportToExcel = () => {
     if (!services) return;
-    const worksheet = XLSX.utils.json_to_sheet(services);
+    const worksheet = XLSX.utils.json_to_sheet(services.flatMap((s, i) => ([{ 'Route Option': i+1, 'Total Duration': s.duration, 'Total Distance': s.distance }, ...s.steps.map(step => ({ Instruction: step.instruction, Mode: step.travelMode, 'Step Duration': step.duration, 'Step Distance': step.distance }))])));
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Bus Services");
-    XLSX.writeFile(workbook, "APSRTC_Bus_Services.xlsx");
+    XLSX.writeFile(workbook, "Bus_Route_Options.xlsx");
   };
-
-  const FeatureCard = ({ icon, title, description, href, action }: { icon: React.ReactNode, title: string, description: string, href?: string, action?: () => void }) => {
-    const content = (
-        <Card className="text-center hover:shadow-lg transition-shadow">
-            <CardHeader>
-                <div className="mx-auto bg-muted p-4 rounded-full w-fit">
-                    {icon}
-                </div>
-            </CardHeader>
-            <CardContent>
-                <CardTitle className="text-lg mb-2">{title}</CardTitle>
-                <CardDescription>{description}</CardDescription>
-            </CardContent>
-        </Card>
-    );
-
-    if (href) {
-        return <a href={href}>{content}</a>
-    }
-
-    return <button onClick={action} className="w-full h-full">{content}</button>;
-  }
-
+  
+    const StepIcon = ({ travelMode }: { travelMode: string }) => {
+        if (travelMode === 'WALK') {
+            return <PersonStanding className="h-5 w-5 text-muted-foreground" />;
+        }
+        if (travelMode === 'TRANSIT') {
+            return <Bus className="h-5 w-5 text-muted-foreground" />;
+        }
+        return <TramFront className="h-5 w-5 text-muted-foreground" />;
+    };
 
   return (
     <div className="container mx-auto py-8 px-4 md:px-6">
@@ -178,13 +170,13 @@ export default function RoutesPage() {
           Services & Live Tracking
         </h1>
         <p className="text-muted-foreground">
-          Search, track, and manage your bus journey.
+          Search for transit routes and track buses in real-time.
         </p>
       </div>
 
       <Tabs defaultValue="search" className="w-full" onValueChange={() => { setTrackingResult(null); setError(null); setSearched(false); setServices(null)}}>
         <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="search"><Search className="mr-2 h-4 w-4"/>Search Buses</TabsTrigger>
+          <TabsTrigger value="search"><Search className="mr-2 h-4 w-4"/>Search Routes</TabsTrigger>
           <TabsTrigger value="track-service"><Ticket className="mr-2 h-4 w-4"/>Track by Service</TabsTrigger>
           <TabsTrigger value="track-vehicle"><Bus className="mr-2 h-4 w-4"/>Track by Vehicle</TabsTrigger>
         </TabsList>
@@ -193,7 +185,7 @@ export default function RoutesPage() {
         <TabsContent value="search">
             <Card className="mb-8">
                 <CardHeader>
-                <CardTitle>Search for Services</CardTitle>
+                <CardTitle>Search for Transit Routes</CardTitle>
                 </CardHeader>
                 <CardContent>
                 <Form {...searchForm}>
@@ -208,7 +200,7 @@ export default function RoutesPage() {
                         <FormItem>
                             <FormLabel>From</FormLabel>
                             <FormControl>
-                            <Input placeholder="e.g., VIJAYAWADA" {...field} />
+                            <Input placeholder="e.g., Vijayawada" {...field} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -221,7 +213,7 @@ export default function RoutesPage() {
                         <FormItem>
                             <FormLabel>To</FormLabel>
                             <FormControl>
-                            <Input placeholder="e.g., HYDERABAD" {...field} />
+                            <Input placeholder="e.g., Hyderabad" {...field} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -232,7 +224,7 @@ export default function RoutesPage() {
                         name="date"
                         render={({ field }) => (
                         <FormItem className="flex flex-col">
-                            <FormLabel>Date</FormLabel>
+                            <FormLabel>Departure Date</FormLabel>
                             <Popover>
                             <PopoverTrigger asChild>
                                 <FormControl>
@@ -278,7 +270,7 @@ export default function RoutesPage() {
                         ) : (
                             <>
                             <Search className="mr-2 h-4 w-4" />
-                            Find Buses
+                            Find Routes
                             </>
                         )}
                         </Button>
@@ -290,9 +282,9 @@ export default function RoutesPage() {
             <Card>
                 <CardHeader className="flex flex-row justify-between items-center">
                     <div>
-                        <CardTitle>Available Services</CardTitle>
+                        <CardTitle>Available Routes</CardTitle>
                         <CardDescription>
-                            List of services based on your search criteria.
+                            List of route options based on your search.
                         </CardDescription>
                     </div>
                     {services && services.length > 0 && (
@@ -306,50 +298,61 @@ export default function RoutesPage() {
                 {isLoading && (
                     <div className="flex items-center justify-center py-16 text-muted-foreground">
                     <Loader2 className="mr-3 h-8 w-8 animate-spin" />
-                    <p>Loading live bus data...</p>
+                    <p>Loading transit data...</p>
                     </div>
                 )}
                 {error && <p className="text-destructive text-center py-16">{error}</p>}
-                {!isLoading && !error && services && (
-                    <Table>
-                    <TableHeader>
-                        <TableRow>
-                        <TableHead>Service</TableHead>
-                        <TableHead>Departs</TableHead>
-                        <TableHead>Arrives</TableHead>
-                        <TableHead>Duration</TableHead>
-                        <TableHead className="text-right">Seats</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {services.map((service) => (
-                        <TableRow key={service.serviceId}>
-                            <TableCell className="font-medium">
-                            {service.serviceName}
-                            </TableCell>
-                            <TableCell>{service.departureTime}</TableCell>
-                            <TableCell>{service.arrivalTime}</TableCell>
-                            <TableCell>{service.duration}</TableCell>
-                            <TableCell className="text-right">
-                            {service.seatsAvailable}
-                            </TableCell>
-                        </TableRow>
+                {!isLoading && !error && services && services.length > 0 && (
+                    <Accordion type="single" collapsible className="w-full">
+                        {services.map((service, index) => (
+                            <AccordionItem value={`item-${index}`} key={index}>
+                                <AccordionTrigger>
+                                    <div className='flex justify-between w-full pr-4'>
+                                        <span>Route Option {index + 1}</span>
+                                        <div className="flex gap-4 text-sm text-muted-foreground">
+                                            <span className="flex items-center"><Clock className="mr-1 h-4 w-4" /> {parseInt(service.duration)}s</span>
+                                            <span className="flex items-center"><Milestone className="mr-1 h-4 w-4" /> {service.distance}</span>
+                                        </div>
+                                    </div>
+                                </AccordionTrigger>
+                                <AccordionContent>
+                                    <Table>
+                                        <TableHeader>
+                                            <TableRow>
+                                                <TableHead className="w-[100px]">Mode</TableHead>
+                                                <TableHead>Instruction</TableHead>
+                                                <TableHead>Duration</TableHead>
+                                                <TableHead className="text-right">Distance</TableHead>
+                                            </TableRow>
+                                        </TableHeader>
+                                        <TableBody>
+                                            {service.steps.map((step, stepIndex) => (
+                                                <TableRow key={stepIndex}>
+                                                    <TableCell><StepIcon travelMode={step.travelMode} /></TableCell>
+                                                    <TableCell className="font-medium">{step.instruction}</TableCell>
+                                                    <TableCell>{parseInt(step.duration)}s</TableCell>
+                                                    <TableCell className="text-right">{step.distance}</TableCell>
+                                                </TableRow>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
+                                </AccordionContent>
+                            </AccordionItem>
                         ))}
-                    </TableBody>
-                    </Table>
+                    </Accordion>
                 )}
                 {!isLoading && searched && services?.length === 0 && !trackingResult && (
                     <div className="text-center text-muted-foreground py-16">
                         <Bus className="h-12 w-12 mx-auto mb-4" />
-                        <p className="text-lg font-medium">No services found.</p>
-                        <p>There are no buses available for the selected route and date.</p>
+                        <p className="text-lg font-medium">No routes found.</p>
+                        <p>There are no bus routes available for the selected origin and destination.</p>
                     </div>
                 )}
                 {!isLoading && !searched && !error && (
                     <div className="text-center text-muted-foreground py-16">
                         <Search className="h-12 w-12 mx-auto mb-4" />
                         <p className="text-lg font-medium">Your search results will appear here.</p>
-                        <p>Fill out the form to find available buses.</p>
+                        <p>Fill out the form to find available routes.</p>
                     </div>
                 )}
                 </CardContent>
@@ -404,8 +407,8 @@ export default function RoutesPage() {
                                     <p><strong>ETA to Destination:</strong> {trackingResult.eta}</p>
                                 </CardContent>
                             </Card>
-                             <Card className="overflow-hidden">
-                                <CardContent className="p-0">
+                             <Card className="overflow-hidden h-64">
+                                <CardContent className="p-0 h-full">
                                     <LiveMap buses={[trackingResult as BusType]} />
                                 </CardContent>
                             </Card>
@@ -470,8 +473,8 @@ export default function RoutesPage() {
                                     <p><strong>Route:</strong> {trackingResult.route}</p>
                                 </CardContent>
                             </Card>
-                            <Card className="overflow-hidden">
-                                <CardContent className="p-0">
+                            <Card className="overflow-hidden h-64">
+                                <CardContent className="p-0 h-full">
                                     <LiveMap buses={[trackingResult as BusType]} />
                                 </CardContent>
                             </Card>
