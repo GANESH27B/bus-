@@ -21,7 +21,7 @@ interface LiveMapProps {
 
 const containerStyle = {
   width: '100%',
-  height: '600px',
+  height: '100%',
 };
 
 const defaultCenter = {
@@ -32,6 +32,20 @@ const defaultCenter = {
 const mapOptions = {
   disableDefaultUI: true,
   zoomControl: true,
+  styles: [
+    {
+        "featureType": "poi",
+        "stylers": [
+            { "visibility": "off" }
+        ]
+    },
+    {
+        "featureType": "transit",
+        "stylers": [
+            { "visibility": "off" }
+        ]
+    }
+  ]
 };
 
 function LiveMap({ buses, stops, center, zoom }: LiveMapProps) {
@@ -92,13 +106,13 @@ function LiveMap({ buses, stops, center, zoom }: LiveMapProps) {
 
   if (!isLoaded)
     return (
-      <div className="flex items-center justify-center h-[600px] bg-muted">
+      <div className="flex items-center justify-center h-full bg-muted">
         Loading Map...
       </div>
     );
 
   return (
-    <div className="relative">
+    <div className="relative h-full w-full">
       <GoogleMap
         mapContainerStyle={containerStyle}
         center={center || defaultCenter}
@@ -181,14 +195,6 @@ function LiveMap({ buses, stops, center, zoom }: LiveMapProps) {
           </InfoWindow>
         )}
       </GoogleMap>
-      <Button
-        size="icon"
-        onClick={centerOnUser}
-        className="absolute bottom-4 left-4 z-10"
-        aria-label="Center map on my location"
-      >
-        <LocateFixed className="h-5 w-5" />
-      </Button>
     </div>
   );
 }
