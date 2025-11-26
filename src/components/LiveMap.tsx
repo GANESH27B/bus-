@@ -52,6 +52,7 @@ function LiveMap({ buses, stops = [], center, zoom, userLocation }: LiveMapProps
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '',
+    libraries: ['places'],
   });
 
   const [map, setMap] = useState<google.maps.Map | null>(null);
@@ -63,12 +64,19 @@ function LiveMap({ buses, stops = [], center, zoom, userLocation }: LiveMapProps
         if (zoom) {
             map.setZoom(zoom);
         }
+    } else if (map && buses.length > 0) {
+        map.panTo({ lat: buses[0].lat, lng: buses[0].lng });
+    } else if (map && userLocation) {
+        map.panTo(userLocation);
     }
-  }, [map, center, zoom]);
+  }, [map, center, zoom, buses, userLocation]);
 
 
   const handleMarkerClick = (marker: Bus | Stop) => {
     setActiveMarker(marker);
+    if(map) {
+      map.panTo({ lat: marker.lat, lng: marker.lng });
+    }
   };
 
   const onLoad = useCallback(function callback(mapInstance: google.maps.Map) {
@@ -176,3 +184,5 @@ function LiveMap({ buses, stops = [], center, zoom, userLocation }: LiveMapProps
 }
 
 export default React.memo(LiveMap);
+
+    

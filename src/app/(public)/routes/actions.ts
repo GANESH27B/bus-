@@ -26,6 +26,13 @@ type ActionResult = {
   error?: string;
 };
 
+function formatDistance(meters: number): string {
+    if (meters < 1000) {
+        return `${meters.toFixed(0)} m`;
+    }
+    return `${(meters / 1000).toFixed(1)} km`;
+}
+
 export async function getAvailableServices(
   values: z.infer<typeof formSchema>
 ): Promise<ActionResult> {
@@ -80,12 +87,12 @@ export async function getAvailableServices(
     
     const formattedServices: Service[] = data.routes.map((route: any) => ({
       duration: route.duration,
-      distance: `${(route.distanceMeters / 1000).toFixed(1)} km`,
+      distance: formatDistance(route.distanceMeters),
       steps: route.legs[0].steps.map((step: any) => ({
         instruction: step.transitDetails?.headsign || step.navigationInstruction?.instructions || "Proceed",
         travelMode: step.travelMode,
         duration: step.duration,
-        distance: `${(step.distanceMeters).toFixed(0)} m`,
+        distance: formatDistance(step.distanceMeters),
       }))
     }));
     
@@ -149,3 +156,5 @@ export async function trackByVehicleNumber(vehicleNumber: string): Promise<Actio
     },
   };
 }
+
+    

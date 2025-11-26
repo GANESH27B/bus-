@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { getAvailableServices, trackByServiceNumber, trackByVehicleNumber } from './actions';
 import {
   Form,
@@ -40,7 +40,7 @@ import * as XLSX from 'xlsx';
 import LiveMap from '@/components/LiveMap';
 import type { Bus as BusType } from '@/lib/types';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-
+import { useJsApiLoader, Autocomplete } from '@react-google-maps/api';
 
 const searchSchema = z.object({
   from: z.string().min(3, { message: 'Please enter a valid location.' }),
@@ -71,18 +71,30 @@ type Service = {
     steps: Step[];
 };
 
+function formatDuration(isoDuration: string) {
+    const seconds = parseInt(isoDuration.replace('s', ''), 10);
+    if (isNaN(seconds)) return 'N/A';
+    const minutes = Math.floor(seconds / 60);
+    return `${minutes} min`;
+}
+
+
 export default function RoutesPage() {
   const [services, setServices] = useState<Service[] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [searched, setSearched] = useState(false);
   const [trackingResult, setTrackingResult] = useState<any | null>(null);
+  const { isLoaded } = useJsApiLoader({
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
+    libraries: ['places'],
+  });
 
   const searchForm = useForm<z.infer<typeof searchSchema>>({
     resolver: zodResolver(searchSchema),
     defaultValues: {
-      from: 'Vijayawada, AP, India',
-      to: 'Hyderabad, Telangana, India',
+      from: '',
+      to: '',
       date: new Date(),
     },
   });
@@ -147,7 +159,7 @@ export default function RoutesPage() {
 
   const exportToExcel = () => {
     if (!services) return;
-    const worksheet = XLSX.utils.json_to_sheet(services.flatMap((s, i) => ([{ 'Route Option': i+1, 'Total Duration': s.duration, 'Total Distance': s.distance }, ...s.steps.map(step => ({ Instruction: step.instruction, Mode: step.travelMode, 'Step Duration': step.duration, 'Step Distance': step.distance }))])));
+    const worksheet = XLSX.utils.json_to_sheet(services.flatMap((s, i) => ([{ 'Route Option': i+1, 'Total Duration': formatDuration(s.duration), 'Total Distance': s.distance }, ...s.steps.map(step => ({ Instruction: step.instruction, Mode: step.travelMode, 'Step Duration': formatDuration(step.duration), 'Step Distance': step.distance }))])));
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Bus Services");
     XLSX.writeFile(workbook, "Bus_Route_Options.xlsx");
@@ -162,6 +174,10 @@ export default function RoutesPage() {
         }
         return <TramFront className="h-5 w-5 text-muted-foreground" />;
     };
+
+  if (!isLoaded) {
+    return <div className="container mx-auto py-8 px-4 md:px-6 flex justify-center items-center h-[50vh]"><Loader2 className="h-8 w-8 animate-spin" /></div>
+  }
 
   return (
     <div className="container mx-auto py-8 px-4 md:px-6">
@@ -199,8 +215,21 @@ export default function RoutesPage() {
                         render={({ field }) => (
                         <FormItem>
                             <FormLabel>From</FormLabel>
-                            <FormControl>
-                            <Input placeholder="e.g., Vijayawada" {...field} />
+                             <FormControl>
+                                <Autocomplete
+                                    onLoad={(autocomplete) => {
+                                        autocomplete.setFields(["formatted_address"]);
+                                    }}
+                                    onPlaceChanged={() => {
+                                        const autocomplete = (window as any).fromAutocomplete;
+                                        if (autocomplete !== null) {
+                                            const place = autocomplete.getPlace();
+                                            field.onChange(place.formatted_address);
+                                        }
+                                    }}
+                                >
+                                <Input placeholder="e.g., Vijayawada" {...field} />
+                                </Autocomplete>
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -213,7 +242,20 @@ export default function RoutesPage() {
                         <FormItem>
                             <FormLabel>To</FormLabel>
                             <FormControl>
-                            <Input placeholder="e.g., Hyderabad" {...field} />
+                               <Autocomplete
+                                    onLoad={(autocomplete) => {
+                                        autocomplete.setFields(["formatted_address"]);
+                                    }}
+                                    onPlaceChanged={() => {
+                                        const autocomplete = (window as any).toAutocomplete;
+                                        if (autocomplete !== null) {
+                                            const place = autocomplete.getPlace();
+                                            field.onChange(place.formatted_address);
+                                        }
+                                    }}
+                                >
+                                <Input placeholder="e.g., Hyderabad" {...field} />
+                                </Autocomplete>
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -310,7 +352,7 @@ export default function RoutesPage() {
                                     <div className='flex justify-between w-full pr-4'>
                                         <span>Route Option {index + 1}</span>
                                         <div className="flex gap-4 text-sm text-muted-foreground">
-                                            <span className="flex items-center"><Clock className="mr-1 h-4 w-4" /> {parseInt(service.duration)}s</span>
+                                            <span className="flex items-center"><Clock className="mr-1 h-4 w-4" /> {formatDuration(service.duration)}</span>
                                             <span className="flex items-center"><Milestone className="mr-1 h-4 w-4" /> {service.distance}</span>
                                         </div>
                                     </div>
@@ -330,7 +372,7 @@ export default function RoutesPage() {
                                                 <TableRow key={stepIndex}>
                                                     <TableCell><StepIcon travelMode={step.travelMode} /></TableCell>
                                                     <TableCell className="font-medium">{step.instruction}</TableCell>
-                                                    <TableCell>{parseInt(step.duration)}s</TableCell>
+                                                    <TableCell>{formatDuration(step.duration)}</TableCell>
                                                     <TableCell className="text-right">{step.distance}</TableCell>
                                                 </TableRow>
                                             ))}
@@ -395,7 +437,7 @@ export default function RoutesPage() {
                         </div>
                     )}
                     {error && <p className="text-destructive text-center py-16">{error}</p>}
-                    {!isLoading && !error && trackingResult && (
+                    {trackingResult && (
                         <div className="grid md:grid-cols-2 gap-8">
                             <Card>
                                 <CardHeader>
@@ -409,7 +451,7 @@ export default function RoutesPage() {
                             </Card>
                              <Card className="overflow-hidden h-64">
                                 <CardContent className="p-0 h-full">
-                                    <LiveMap buses={[trackingResult as BusType]} />
+                                    <LiveMap buses={[trackingResult as BusType]} center={{lat: trackingResult.lat, lng: trackingResult.lng }} zoom={14} />
                                 </CardContent>
                             </Card>
                         </div>
@@ -461,7 +503,7 @@ export default function RoutesPage() {
                         </div>
                     )}
                     {error && <p className="text-destructive text-center py-16">{error}</p>}
-                    {!isLoading && !error && trackingResult && (
+                    {trackingResult && (
                         <div className="grid md:grid-cols-2 gap-8">
                             <Card>
                                 <CardHeader>
@@ -475,7 +517,7 @@ export default function RoutesPage() {
                             </Card>
                             <Card className="overflow-hidden h-64">
                                 <CardContent className="p-0 h-full">
-                                    <LiveMap buses={[trackingResult as BusType]} />
+                                    <LiveMap buses={[trackingResult as BusType]} center={{lat: trackingResult.lat, lng: trackingResult.lng }} zoom={14} />
                                 </CardContent>
                             </Card>
                         </div>
@@ -494,3 +536,5 @@ export default function RoutesPage() {
     </div>
   );
 }
+
+    
