@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { buses, routes } from '@/lib/data';
 import type { Stop } from '@/lib/types';
 import { LocateFixed } from 'lucide-react';
@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 export default function LiveTrackingPage() {
   const [mapCenter, setMapCenter] = useState<google.maps.LatLngLiteral | null>(null);
   const [mapZoom, setMapZoom] = useState<number>(12);
+  const [userLocation, setUserLocation] = useState<google.maps.LatLngLiteral | null>(null);
 
   const allStops = useMemo(() => {
     const stops: Stop[] = [];
@@ -26,11 +27,12 @@ export default function LiveTrackingPage() {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         position => {
-          const userLocation = {
+          const location = {
             lat: position.coords.latitude,
             lng: position.coords.longitude,
           };
-          setMapCenter(userLocation);
+          setUserLocation(location);
+          setMapCenter(location);
           setMapZoom(15);
         },
         () => {
@@ -44,6 +46,11 @@ export default function LiveTrackingPage() {
     }
   }, []);
 
+  useEffect(() => {
+    centerOnUser();
+  }, [centerOnUser]);
+
+
   return (
     <div className="relative h-[calc(100vh-4rem)] w-full">
         <div className="absolute top-4 left-4 z-10 flex flex-col gap-4">
@@ -52,7 +59,7 @@ export default function LiveTrackingPage() {
                     Live Bus Map
                 </h1>
                 <p className="text-muted-foreground text-sm max-w-xs">
-                    Bus stops are shown as dots. Click the button to center on your location.
+                    Bus stops are shown as red pins. Your location is the blue dot.
                 </p>
             </div>
              <Button onClick={centerOnUser} className="w-full shadow-lg">
@@ -65,6 +72,7 @@ export default function LiveTrackingPage() {
         stops={allStops}
         center={mapCenter}
         zoom={mapZoom}
+        userLocation={userLocation}
       />
     </div>
   );

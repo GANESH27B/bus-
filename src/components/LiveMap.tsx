@@ -16,6 +16,7 @@ interface LiveMapProps {
   stops?: Stop[];
   center?: google.maps.LatLngLiteral | null;
   zoom?: number;
+  userLocation?: google.maps.LatLngLiteral | null;
 }
 
 const containerStyle = {
@@ -47,7 +48,7 @@ const mapOptions = {
   ]
 };
 
-function LiveMap({ buses, stops = [], center, zoom }: LiveMapProps) {
+function LiveMap({ buses, stops = [], center, zoom, userLocation }: LiveMapProps) {
   const { isLoaded } = useJsApiLoader({
     id: 'google-map-script',
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || '',
@@ -55,28 +56,6 @@ function LiveMap({ buses, stops = [], center, zoom }: LiveMapProps) {
 
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [activeMarker, setActiveMarker] = useState<Bus | Stop | null>(null);
-  const [myLocation, setMyLocation] = useState<google.maps.LatLngLiteral | null>(null);
-
-  const centerOnUser = useCallback(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        position => {
-          const userLocation = {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          };
-          setMyLocation(userLocation);
-          map?.panTo(userLocation);
-          map?.setZoom(15);
-        },
-        () => {
-          console.log('Error: The Geolocation service failed.');
-        }
-      );
-    } else {
-      console.log("Error: Your browser doesn't support geolocation.");
-    }
-  }, [map]);
 
   useEffect(() => {
     if (map && center) {
@@ -154,9 +133,9 @@ function LiveMap({ buses, stops = [], center, zoom }: LiveMapProps) {
           />
         ))}
 
-        {myLocation && (
+        {userLocation && (
           <Marker
-            position={myLocation}
+            position={userLocation}
             title="Your Location"
             icon={{
               path: window.google.maps.SymbolPath.CIRCLE,
