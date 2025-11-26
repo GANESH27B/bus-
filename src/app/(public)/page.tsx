@@ -28,6 +28,7 @@ const features = [
 
 export default function HomePage() {
   const heroImage = PlaceHolderImages.find(p => p.id === 'hero-bus');
+  const ctaImage = PlaceHolderImages.find(p => p.id === 'cta-background');
 
   return (
     <div className="flex-1">
@@ -95,10 +96,20 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="bg-secondary py-12 md:py-20">
-        <div className="container mx-auto px-4 text-center">
+      <section className="relative bg-secondary py-20 md:py-28 text-white">
+        {ctaImage && (
+            <Image
+                src={ctaImage.imageUrl}
+                alt={ctaImage.description}
+                fill
+                className="object-cover"
+                data-ai-hint={ctaImage.imageHint}
+            />
+        )}
+        <div className="absolute inset-0 bg-primary/80" />
+        <div className="container relative z-10 mx-auto px-4 text-center">
           <h2 className="text-3xl md:text-4xl font-bold font-headline">Ready to Get Started?</h2>
-          <p className="mt-2 text-lg text-muted-foreground max-w-2xl mx-auto">
+          <p className="mt-2 text-lg text-primary-foreground/90 max-w-2xl mx-auto">
             Plan your next trip or find your bus right now.
           </p>
           <div className="mt-8">
