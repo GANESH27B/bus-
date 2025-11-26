@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -11,10 +11,45 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Map, Search } from 'lucide-react';
+import { Map, Search, Mic, MicOff } from 'lucide-react';
+import { cn } from '@/lib/utils';
+
+// A global variable to hold the SpeechRecognition instance, so it can be accessed across renders.
+let speechRecognition: SpeechRecognition | null = null;
+
 
 export default function MapSearchPage() {
   const [query, setQuery] = useState('');
+  const [isListening, setIsListening] = useState(false);
+  const [hasSpeechSupport, setHasSpeechSupport] = useState(false);
+
+  useEffect(() => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      setHasSpeechSupport(true);
+      speechRecognition = new SpeechRecognition();
+      speechRecognition.continuous = false;
+      speechRecognition.lang = 'en-US';
+      speechRecognition.interimResults = false;
+
+      speechRecognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        setQuery(transcript);
+        setIsListening(false);
+      };
+
+      speechRecognition.onerror = (event) => {
+        console.error("Speech recognition error", event.error);
+        setIsListening(false);
+      };
+      
+      speechRecognition.onend = () => {
+        setIsListening(false);
+      };
+    } else {
+        setHasSpeechSupport(false);
+    }
+  }, []);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,6 +60,19 @@ export default function MapSearchPage() {
       window.open(searchUrl, '_blank');
     }
   };
+
+  const handleMicClick = () => {
+    if (!speechRecognition) return;
+
+    if (isListening) {
+      speechRecognition.stop();
+      setIsListening(false);
+    } else {
+      speechRecognition.start();
+      setIsListening(true);
+    }
+  };
+
 
   return (
     <div className="container mx-auto py-8 px-4 md:px-6 flex justify-center">
@@ -42,12 +90,30 @@ export default function MapSearchPage() {
           <form onSubmit={handleSearch} className="flex flex-col gap-4">
             <div className="space-y-2">
               <Label htmlFor="search-query">Search Location</Label>
-              <Input
-                id="search-query"
-                placeholder="e.g., 'Main Street Park' or '123 Fake St'"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-              />
+              <div className="relative">
+                <Input
+                  id="search-query"
+                  placeholder="e.g., 'Main Street Park' or '123 Fake St'"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  className={cn(hasSpeechSupport && 'pr-12')}
+                />
+                 {hasSpeechSupport && (
+                  <Button 
+                    type="button" 
+                    size="icon" 
+                    variant="ghost" 
+                    onClick={handleMicClick}
+                    className={cn(
+                        "absolute right-1 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary h-8 w-8",
+                        isListening && "text-destructive animate-pulse"
+                    )}
+                    aria-label={isListening ? "Stop listening" : "Start listening"}
+                    >
+                    {isListening ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
+                  </Button>
+                )}
+              </div>
             </div>
             <Button type="submit" disabled={!query.trim()}>
               <Search className="mr-2 h-4 w-4" />
