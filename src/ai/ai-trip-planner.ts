@@ -10,6 +10,7 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import { getAPSRTCBuses } from '@/lib/apsrtc';
 
 const AiTripPlannerInputSchema = z.object({
   startLocation: z.string().describe('The starting location of the trip.'),
@@ -32,6 +33,23 @@ const AiTripPlannerOutputSchema = z.object({
 
 export type AiTripPlannerOutput = z.infer<typeof AiTripPlannerOutputSchema>;
 
+const getBusRoutesTool = ai.defineTool(
+  {
+    name: 'getBusRoutes',
+    description: 'Get available bus routes from APSRTC for a given source, destination, and date.',
+    inputSchema: z.object({
+      from: z.string().describe('The starting city.'),
+      to: z.string().describe('The destination city.'),
+      date: z.string().describe('The date of travel in DD/MM/YYYY format.'),
+    }),
+    outputSchema: z.any(),
+  },
+  async ({ from, to, date }) => {
+    return getAPSRTCBuses(from, to, date);
+  }
+);
+
+
 export async function aiTripPlanner(input: AiTripPlannerInput): Promise<AiTripPlannerOutput> {
   return aiTripPlannerFlow(input);
 }
@@ -40,7 +58,10 @@ const prompt = ai.definePrompt({
   name: 'aiTripPlannerPrompt',
   input: {schema: AiTripPlannerInputSchema},
   output: {schema: AiTripPlannerOutputSchema},
+  tools: [getBusRoutesTool],
   prompt: `You are an expert AI trip planner for a public bus system. Your goal is to provide the most efficient and clear route from a start location to a destination, taking into account user preferences.
+
+  Use the 'getBusRoutes' tool to find real-time bus availability for today's date. The date format should be DD/MM/YYYY.
 
   Starting Location: {{{startLocation}}}
   Destination: {{{destination}}}
@@ -49,7 +70,7 @@ const prompt = ai.definePrompt({
   Please provide a detailed, step-by-step trip plan. The plan should include:
   1. A short summary of the trip.
   2. Walking directions to bus stops.
-  3. The specific bus number to take (e.g., "Bus 101").
+  3. The specific bus service name or number to take.
   4. The names of the departure and arrival bus stops.
   5. The estimated time for each leg of the journey.
   6. A total estimated travel time (eta).
@@ -66,8 +87,8 @@ const prompt = ai.definePrompt({
     "summary": "A quick 21-minute trip with one bus connection.",
     "routes": [
       "Walk 5 minutes to Central Station.",
-      "Take Bus 101 towards City Hall.",
-      "Get off at Museum of Modern Art.",
+      "Take SUPER LUXURY(NON-AC) bus towards HYDERABAD.",
+      "Get off at HYDERABAD.",
       "Walk 3 minutes to your destination."
     ],
     "schedules": [
@@ -78,9 +99,9 @@ const prompt = ai.definePrompt({
     ],
     "eta": "21 minutes",
     "locations": [
-      { "name": "Central Station" },
-      { "name": "Museum of Modern Art" },
-      { "name": "Museum of Modern Art" },
+      { "name": "VIJAYAWADA" },
+      { "name": "HYDERABAD" },
+      { "name": "HYDERABAD" },
       { "name": "Your Destination" }
     ]
   }`,
