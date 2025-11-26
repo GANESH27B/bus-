@@ -101,6 +101,12 @@ export async function trackByServiceNumber(serviceNumber: string): Promise<Actio
       status: "On Time",
       location: "Approaching Central Station",
       eta: "15 minutes",
+      number: serviceNumber,
+      routeId: "route-1",
+      lat: 34.054,
+      lng: -118.243,
+      driver: 'John Doe',
+      lastUpdated: new Date().toISOString(),
     },
   };
 }
@@ -119,6 +125,12 @@ export async function trackByVehicleNumber(vehicleNumber: string): Promise<Actio
       status: "Active",
       location: "Westside Mall",
       route: "202 - Crosstown Connector",
+      number: vehicleNumber,
+      routeId: "route-2",
+      lat: 34.035,
+      lng: -118.265,
+      driver: 'Jane Smith',
+      lastUpdated: new Date().toISOString(),
     },
   };
 }

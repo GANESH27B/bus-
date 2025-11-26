@@ -38,6 +38,9 @@ import { cn } from '@/lib/utils';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import * as XLSX from 'xlsx';
 import Link from 'next/link';
+import LiveMap from '@/components/LiveMap';
+import type { Bus as BusType } from '@/lib/types';
+
 
 const searchSchema = z.object({
   from: z.string().min(3, { message: 'Please enter a valid location.' }),
@@ -90,14 +93,17 @@ export default function RoutesPage() {
     defaultValues: { vehicleNumber: "" },
   });
 
-
-  async function onSearchSubmit(values: z.infer<typeof searchSchema>) {
+  const clearState = () => {
     setIsLoading(true);
     setError(null);
     setServices(null);
     setSearched(true);
     setTrackingResult(null);
+  }
 
+  async function onSearchSubmit(values: z.infer<typeof searchSchema>) {
+    clearState();
+    
     const formattedValues = {
         ...values,
         date: format(values.date, "dd/MM/yyyy"),
@@ -114,10 +120,7 @@ export default function RoutesPage() {
   }
 
   async function onTrackServiceSubmit(values: z.infer<typeof trackServiceSchema>) {
-    setIsLoading(true);
-    setError(null);
-    setTrackingResult(null);
-    setSearched(true);
+    clearState();
     const result = await trackByServiceNumber(values.serviceNumber);
     if (result.success) {
       setTrackingResult(result.data);
@@ -128,10 +131,7 @@ export default function RoutesPage() {
   }
 
   async function onTrackVehicleSubmit(values: z.infer<typeof trackVehicleSchema>) {
-    setIsLoading(true);
-    setError(null);
-    setTrackingResult(null);
-    setSearched(true);
+    clearState();
     const result = await trackByVehicleNumber(values.vehicleNumber);
      if (result.success) {
       setTrackingResult(result.data);
@@ -183,7 +183,7 @@ export default function RoutesPage() {
         </p>
       </div>
 
-      <Tabs defaultValue="search" className="w-full">
+      <Tabs defaultValue="search" className="w-full" onValueChange={() => { setTrackingResult(null); setError(null); setSearched(false); setServices(null)}}>
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="search"><Search className="mr-2 h-4 w-4"/>Search Buses</TabsTrigger>
           <TabsTrigger value="track-service"><Ticket className="mr-2 h-4 w-4"/>Track by Service</TabsTrigger>
@@ -347,7 +347,7 @@ export default function RoutesPage() {
                         <p>There are no buses available for the selected route and date.</p>
                     </div>
                 )}
-                {!isLoading && !searched && (
+                {!isLoading && !searched && !error && (
                     <div className="text-center text-muted-foreground py-16">
                         <Search className="h-12 w-12 mx-auto mb-4" />
                         <p className="text-lg font-medium">Your search results will appear here.</p>
@@ -367,7 +367,7 @@ export default function RoutesPage() {
                 </CardHeader>
                 <CardContent>
                      <Form {...trackServiceForm}>
-                        <form onSubmit={trackServiceForm.handleSubmit(onTrackServiceSubmit)} className="flex items-start gap-4">
+                        <form onSubmit={trackServiceForm.handleSubmit(onTrackServiceSubmit)} className="flex items-start gap-4 mb-8">
                              <FormField
                                 control={trackServiceForm.control}
                                 name="serviceNumber"
@@ -394,17 +394,31 @@ export default function RoutesPage() {
                         </div>
                     )}
                     {error && <p className="text-destructive text-center py-16">{error}</p>}
-                    {trackingResult && (
-                        <Card className="mt-8">
-                            <CardHeader>
-                                <CardTitle>Tracking Result for Service #{trackingResult.id}</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <p><strong>Status:</strong> {trackingResult.status}</p>
-                                <p><strong>Current Location:</strong> {trackingResult.location}</p>
-                                <p><strong>ETA to Destination:</strong> {trackingResult.eta}</p>
-                            </CardContent>
-                        </Card>
+                    {!isLoading && !error && trackingResult && (
+                        <div className="grid md:grid-cols-2 gap-8">
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle>Tracking Result for Service #{trackingResult.id}</CardTitle>
+                                </CardHeader>
+                                <CardContent className="space-y-2">
+                                    <p><strong>Status:</strong> {trackingResult.status}</p>
+                                    <p><strong>Current Location:</strong> {trackingResult.location}</p>
+                                    <p><strong>ETA to Destination:</strong> {trackingResult.eta}</p>
+                                </CardContent>
+                            </Card>
+                             <Card className="overflow-hidden">
+                                <CardContent className="p-0">
+                                    <LiveMap buses={[trackingResult as BusType]} />
+                                </CardContent>
+                            </Card>
+                        </div>
+                    )}
+                     {!isLoading && !searched && !error && !trackingResult && (
+                        <div className="text-center text-muted-foreground py-16">
+                            <Search className="h-12 w-12 mx-auto mb-4" />
+                            <p className="text-lg font-medium">Your tracking results will appear here.</p>
+                            <p>Enter a service number to track a bus.</p>
+                        </div>
                     )}
                 </CardContent>
             </Card>
@@ -419,7 +433,7 @@ export default function RoutesPage() {
                 </CardHeader>
                 <CardContent>
                      <Form {...trackVehicleForm}>
-                        <form onSubmit={trackVehicleForm.handleSubmit(onTrackVehicleSubmit)} className="flex items-start gap-4">
+                        <form onSubmit={trackVehicleForm.handleSubmit(onTrackVehicleSubmit)} className="flex items-start gap-4 mb-8">
                              <FormField
                                 control={trackVehicleForm.control}
                                 name="vehicleNumber"
@@ -446,17 +460,31 @@ export default function RoutesPage() {
                         </div>
                     )}
                     {error && <p className="text-destructive text-center py-16">{error}</p>}
-                    {trackingResult && (
-                        <Card className="mt-8">
-                            <CardHeader>
-                                <CardTitle>Tracking Result for Vehicle #{trackingResult.id}</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <p><strong>Status:</strong> {trackingResult.status}</p>
-                                <p><strong>Current Location:</strong> {trackingResult.location}</p>
-                                <p><strong>Route:</strong> {trackingResult.route}</p>
-                            </CardContent>
-                        </Card>
+                    {!isLoading && !error && trackingResult && (
+                        <div className="grid md:grid-cols-2 gap-8">
+                            <Card>
+                                <CardHeader>
+                                    <CardTitle>Tracking Result for Vehicle #{trackingResult.id}</CardTitle>
+                                </CardHeader>
+                                <CardContent className="space-y-2">
+                                    <p><strong>Status:</strong> {trackingResult.status}</p>
+                                    <p><strong>Current Location:</strong> {trackingResult.location}</p>
+                                    <p><strong>Route:</strong> {trackingResult.route}</p>
+                                </CardContent>
+                            </Card>
+                            <Card className="overflow-hidden">
+                                <CardContent className="p-0">
+                                    <LiveMap buses={[trackingResult as BusType]} />
+                                </CardContent>
+                            </Card>
+                        </div>
+                    )}
+                    {!isLoading && !searched && !error && !trackingResult && (
+                        <div className="text-center text-muted-foreground py-16">
+                            <Search className="h-12 w-12 mx-auto mb-4" />
+                            <p className="text-lg font-medium">Your tracking results will appear here.</p>
+                            <p>Enter a vehicle number to track a bus.</p>
+                        </div>
                     )}
                 </CardContent>
             </Card>
