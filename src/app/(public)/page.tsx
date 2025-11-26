@@ -10,8 +10,7 @@ const features = [
     icon: <Map className="h-8 w-8 text-primary" />,
     title: "Live Bus Tracking",
     description: "See exactly where your bus is on an interactive map. No more guessing, no more waiting in the dark.",
-    href: "https://www.google.com/maps",
-    target: "_blank",
+    href: "/live-tracking",
   },
   {
     icon: <Route className="h-8 w-8 text-primary" />,

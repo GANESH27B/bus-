@@ -11,7 +11,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 const navLinks = [
   { href: "/", label: "Home" },
-  { href: "https://www.google.com/maps", label: "Live Tracking", target: "_blank" },
+  { href: "/live-tracking", label: "Live Tracking" },
   { href: "/routes", label: "Routes" },
   { href: "/trip-planner", label: "Trip Planner" },
 ];
