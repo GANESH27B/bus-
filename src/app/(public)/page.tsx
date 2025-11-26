@@ -16,10 +16,10 @@ const features = [
   },
   {
     icon: <MapPin className="h-8 w-8 text-primary" />,
-    title: "Find Nearby Bus Stands",
-    description: "Quickly locate the closest bus stands to your current location with a single click.",
+    title: "Live Map",
+    description: "See all bus stops on an interactive map and find the ones closest to your current location.",
     href: "/nearby-stops",
-    buttonText: "Find Now",
+    buttonText: "View Map",
   },
   {
     icon: <Bot className="h-8 w-8 text-primary" />,
