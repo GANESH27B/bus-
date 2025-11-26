@@ -17,13 +17,15 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowRight, Bot, Bus, Clock, Loader2, MapPin, PersonStanding, TramFront } from "lucide-react";
-import { Separator } from "./ui/separator";
+import { ArrowRight, Bot, Bus, Clock, Loader2, MapPin, PersonStanding, TramFront, ExternalLink } from "lucide-react";
+import Link from "next/link";
 
 const formSchema = z.object({
   start: z.string().min(3, { message: "Please enter a valid starting location." }),
   destination: z.string().min(3, { message: "Please enter a valid destination." }),
+  notes: z.string().optional(),
 });
 
 export function TripPlanner() {
@@ -36,6 +38,7 @@ export function TripPlanner() {
     defaultValues: {
       start: "",
       destination: "",
+      notes: "",
     },
   });
 
@@ -103,6 +106,19 @@ export function TripPlanner() {
                     </FormItem>
                   )}
                 />
+                 <FormField
+                  control={form.control}
+                  name="notes"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Notes for Planner (Optional)</FormLabel>
+                      <FormControl>
+                        <Textarea placeholder="e.g., Avoid transfers, prefer scenic route..." {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 <Button type="submit" disabled={isLoading} className="w-full">
                   {isLoading ? (
                     <>
@@ -138,12 +154,25 @@ export function TripPlanner() {
             {tripPlan && (
               <div className="space-y-6">
                  <div className="flex justify-between items-center bg-muted/50 dark:bg-secondary p-4 rounded-lg">
-                    <h3 className="text-lg font-semibold">Total Estimated Time</h3>
+                    <div>
+                        <h3 className="text-lg font-semibold">Total Estimated Time</h3>
+                         <p className="text-sm text-muted-foreground">{tripPlan.summary}</p>
+                    </div>
                     <div className="flex items-center gap-2 text-xl font-bold text-primary">
                         <Clock className="h-6 w-6"/>
                         <span>{tripPlan.totalTime}</span>
                     </div>
                 </div>
+
+                {tripPlan.mapsUrl && (
+                  <Button asChild className="w-full">
+                    <Link href={tripPlan.mapsUrl} target="_blank" rel="noopener noreferrer">
+                      Show Route on Map
+                      <ExternalLink className="ml-2 h-4 w-4" />
+                    </Link>
+                  </Button>
+                )}
+
                 <ul className="space-y-4">
                   {tripPlan.steps.map((step, index) => (
                     <li key={index} className="flex gap-4">

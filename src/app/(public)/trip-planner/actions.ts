@@ -2,11 +2,12 @@
 
 import * as z from "zod";
 import type { TripPlan } from "@/lib/types";
-import { aiTripPlanner } from "@/ai/ai-trip-planner";
+import { aiTripPlanner, AiTripPlannerOutput } from "@/ai/ai-trip-planner";
 
 const formSchema = z.object({
-  start: z.string(),
-  destination: z.string(),
+  start: z.string().min(3, { message: "Please enter a valid starting location." }),
+  destination: z.string().min(3, { message: "Please enter a valid destination." }),
+  notes: z.string().optional(),
 });
 
 type PlanTripResult = {
@@ -14,6 +15,19 @@ type PlanTripResult = {
   data?: TripPlan;
   error?: string;
 };
+
+function formatGoogleMapsUrl(start: string, destination: string, waypoints: string[]): string {
+    const baseUrl = "https://www.google.com/maps/dir/";
+    const searchParams = new URLSearchParams();
+    searchParams.append("api", "1");
+    searchParams.append("origin", start);
+    searchParams.append("destination", destination);
+    if (waypoints.length > 0) {
+        searchParams.append("waypoints", waypoints.join("|"));
+    }
+    searchParams.append("travelmode", "transit");
+    return `${baseUrl}?${searchParams.toString()}`;
+}
 
 export async function planTripAction(values: z.infer<typeof formSchema>): Promise<PlanTripResult> {
   const validatedFields = formSchema.safeParse(values);
@@ -23,20 +37,22 @@ export async function planTripAction(values: z.infer<typeof formSchema>): Promis
   }
   
   try {
-    const plan = await aiTripPlanner({
-        startLocation: validatedFields.data.start,
-        destination: validatedFields.data.destination,
+    const { start, destination, notes } = validatedFields.data;
+    const plan: AiTripPlannerOutput = await aiTripPlanner({
+        startLocation: start,
+        destination: destination,
+        notes: notes,
     });
 
-    // The AI output needs to be mapped to the TripPlan type.
-    // This is a simplified mapping. A more robust implementation might
-    // involve more complex parsing or a more structured AI output.
+    const waypoints = plan.locations?.slice(1, -1).map(loc => loc.name).filter(Boolean) || [];
+
     const tripPlan: TripPlan = {
+        summary: plan.summary,
         totalTime: plan.eta,
+        mapsUrl: formatGoogleMapsUrl(start, destination, waypoints),
         steps: plan.routes.map((route, index) => {
             const schedule = plan.schedules[index] || "Not available";
             
-            // A simple heuristic to check if the step is a bus ride
             if (route.toLowerCase().includes('bus')) {
                 return {
                     instruction: route,

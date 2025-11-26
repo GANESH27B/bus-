@@ -30,6 +30,7 @@ export type Schedule = {
 };
 
 export type TripPlan = {
+  summary?: string;
   steps: {
     instruction: string;
     busNumber?: string;
@@ -39,4 +40,5 @@ export type TripPlan = {
     arrivalTime?: string;
   }[];
   totalTime: string;
+  mapsUrl?: string;
 };
