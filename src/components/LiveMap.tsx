@@ -153,16 +153,16 @@ function LiveMap({ buses, stops = [], center, zoom, userLocation }: LiveMapProps
             position={{ lat: activeMarker.lat, lng: activeMarker.lng }}
             onCloseClick={() => setActiveMarker(null)}
           >
-            <div className="p-2">
+            <div className="p-2 min-w-[150px] text-sm">
               {'number' in activeMarker ? (
                 <>
                   <h3 className="font-bold text-base">Bus {activeMarker.number}</h3>
-                  <p className="text-sm">
+                  <p>
                     Route:{' '}
                     {routes.find(r => r.id === activeMarker.routeId)?.number}
                   </p>
-                  <p className="text-sm capitalize">Status: {activeMarker.status}</p>
-                  <p className="text-sm">Driver: {activeMarker.driver}</p>
+                  <p className="capitalize">Status: {activeMarker.status}</p>
+                  <p>Driver: {activeMarker.driver}</p>
                 </>
               ) : (
                 <h3 className="font-bold text-base">{activeMarker.name}</h3>
