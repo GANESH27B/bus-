@@ -3,7 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BusFront, Menu, UserCog } from "lucide-react";
+import { BusFront, Menu } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -54,14 +54,6 @@ export default function Header() {
             </Link>
           ))}
         </nav>
-        <div className="hidden md:flex items-center">
-            <Button variant="ghost" asChild className="text-primary-foreground hover:bg-white/20">
-                <Link href="/admin/dashboard">
-                    <UserCog className="mr-2 h-5 w-5"/>
-                    Admin Portal
-                </Link>
-            </Button>
-        </div>
         <div className="flex flex-1 items-center justify-end md:hidden">
             <Sheet open={isMenuOpen} onOpenChange={setMenuOpen}>
               <SheetTrigger asChild>
@@ -97,12 +89,6 @@ export default function Header() {
                         {link.label}
                       </Link>
                     ))}
-                     <div className="border-t pt-4 mt-4">
-                        <Link href="/admin/dashboard"  onClick={() => setMenuOpen(false)} className="flex items-center text-muted-foreground hover:text-primary">
-                            <UserCog className="mr-2 h-5 w-5"/>
-                            Admin Portal
-                        </Link>
-                    </div>
                   </div>
                 </div>
               </SheetContent>
