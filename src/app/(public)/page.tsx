@@ -7,19 +7,19 @@ import { PlaceHolderImages } from "@/lib/placeholder-images";
 
 const features = [
   {
-    icon: <Map className="h-10 w-10 text-accent" />,
+    icon: <Map className="h-8 w-8 text-primary" />,
     title: "Live Bus Tracking",
     description: "See exactly where your bus is on an interactive map. No more guessing, no more waiting in the dark.",
     href: "/live-tracking",
   },
   {
-    icon: <Route className="h-10 w-10 text-accent" />,
+    icon: <Route className="h-8 w-8 text-primary" />,
     title: "Routes & Schedules",
     description: "Browse all available routes, check bus timings, and see all the stops on your journey.",
     href: "/routes",
   },
   {
-    icon: <Bot className="h-10 w-10 text-accent" />,
+    icon: <Bot className="h-8 w-8 text-primary" />,
     title: "AI Trip Planner",
     description: "Let our smart assistant plan the best route for you. Get to your destination faster and easier.",
     href: "/trip-planner",
@@ -60,28 +60,32 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="py-12 md:py-20">
+      <section className="py-16 md:py-24 bg-background">
         <div className="container mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold font-headline">Your Complete Transit Toolkit</h2>
+            <p className="mt-2 text-lg text-muted-foreground max-w-2xl mx-auto">
+              Everything you need to navigate the city's bus network with ease.
+            </p>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {features.map((feature) => (
-              <Card key={feature.title} className="flex flex-col hover:shadow-lg transition-shadow duration-300">
-                <CardHeader className="items-center text-center">
-                  <div className="p-3 bg-accent/10 rounded-full mb-4">
-                    {feature.icon}
+              <Card key={feature.title} className="bg-card text-card-foreground border-border/50 shadow-sm hover:shadow-lg transition-all duration-300 group flex flex-col text-center">
+                  <CardContent className="p-8 flex-grow flex flex-col items-center">
+                    <div className="mb-4 p-4 bg-primary/10 rounded-full transition-all duration-300 group-hover:scale-110 group-hover:bg-primary/20">
+                      {feature.icon}
+                    </div>
+                    <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
+                    <p className="text-muted-foreground flex-grow">{feature.description}</p>
+                  </CardContent>
+                  <div className="p-6 pt-0">
+                    <Button asChild variant="outline" className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+                        <Link href={feature.href}>
+                            Learn More
+                            <ArrowRight className="ml-2 h-4 w-4 transform transition-transform group-hover:translate-x-1" />
+                        </Link>
+                    </Button>
                   </div>
-                  <CardTitle>{feature.title}</CardTitle>
-                </CardHeader>
-                <CardContent className="flex-grow text-center">
-                  <CardDescription>{feature.description}</CardDescription>
-                </CardContent>
-                <div className="p-6 pt-0 text-center">
-                   <Button asChild variant="link" className="text-accent-foreground group">
-                      <Link href={feature.href}>
-                          Learn More
-                          <ArrowRight className="ml-2 h-4 w-4 transform transition-transform group-hover:translate-x-1" />
-                      </Link>
-                  </Button>
-                </div>
               </Card>
             ))}
           </div>
@@ -98,7 +102,7 @@ export default function HomePage() {
                 data-ai-hint={ctaImage.imageHint}
             />
         )}
-        <div className="absolute inset-0 bg-black/60" />
+        <div className="absolute inset-0" />
         <div className="container relative z-10 mx-auto px-4 text-center">
           <h2 className="text-3xl md:text-4xl font-bold font-headline">Ready to Get Started?</h2>
           <p className="mt-2 text-lg text-primary-foreground/90 max-w-2xl mx-auto">
