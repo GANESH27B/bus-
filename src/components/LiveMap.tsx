@@ -139,7 +139,7 @@ function LiveMap({ buses }: LiveMapProps) {
       <Button
         size="icon"
         onClick={centerOnUser}
-        className="absolute bottom-4 left-4 z-10 bg-background/80 hover:bg-background/90 backdrop-blur-sm"
+        className="absolute bottom-4 left-4 z-10 bg-green-500 hover:bg-green-600 text-white"
         aria-label="Center map on my location"
       >
         <LocateFixed className="h-5 w-5" />
