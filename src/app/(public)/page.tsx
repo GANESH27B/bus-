@@ -1,17 +1,11 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, Map, Route, Bot } from "lucide-react";
+import { ArrowRight, Route, Bot } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 
 const features = [
-  {
-    icon: <Map className="h-8 w-8 text-primary" />,
-    title: "Live Bus Tracking",
-    description: "See exactly where your bus is on an interactive map. No more guessing, no more waiting in the dark.",
-    href: "/live-tracking",
-  },
   {
     icon: <Route className="h-8 w-8 text-primary" />,
     title: "Routes & Schedules",
@@ -43,6 +37,7 @@ export default function HomePage() {
                 data-ai-hint={heroImage.imageHint}
             />
         )}
+        <div className="absolute inset-0 bg-black/50" />
         <div className="relative z-10 p-4">
           <h1 className="text-4xl md:text-6xl font-bold tracking-tight font-headline">
             Welcome to SmartBus Connect
@@ -51,9 +46,9 @@ export default function HomePage() {
             Your city's transit, simplified. Real-time tracking, ETAs, and trip planning at your fingertips.
           </p>
           <div className="mt-8 flex justify-center gap-4">
-            <Button asChild size="lg" className="bg-accent text-accent-foreground hover:bg-accent/90">
-              <Link href="/live-tracking">
-                Find My Bus <ArrowRight className="ml-2 h-5 w-5" />
+            <Button asChild size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90">
+              <Link href="/routes">
+                Explore Routes <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>
           </div>
@@ -68,7 +63,7 @@ export default function HomePage() {
               Everything you need to navigate the city's bus network with ease.
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             {features.map((feature) => (
               <Card key={feature.title} className="bg-card text-card-foreground border-border/50 shadow-sm hover:shadow-lg transition-all duration-300 group flex flex-col text-center">
                   <CardContent className="p-8 flex-grow flex flex-col items-center">
@@ -80,7 +75,7 @@ export default function HomePage() {
                   </CardContent>
                   <div className="p-6 pt-0">
                     <Button asChild variant="outline" className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
-                        <Link href={feature.href} target={feature.target}>
+                        <Link href={feature.href}>
                             Learn More
                             <ArrowRight className="ml-2 h-4 w-4 transform transition-transform group-hover:translate-x-1" />
                         </Link>
@@ -102,7 +97,7 @@ export default function HomePage() {
                 data-ai-hint={ctaImage.imageHint}
             />
         )}
-        <div className="absolute inset-0" />
+        <div className="absolute inset-0 bg-black/60" />
         <div className="container relative z-10 mx-auto px-4 text-center">
           <h2 className="text-3xl md:text-4xl font-bold font-headline">Ready to Get Started?</h2>
           <p className="mt-2 text-lg text-primary-foreground/90 max-w-2xl mx-auto">

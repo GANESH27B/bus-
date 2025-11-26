@@ -15,7 +15,6 @@ export default function Footer() {
           </div>
           <nav className="flex flex-wrap justify-center gap-4 md:gap-6 text-sm mb-4 md:mb-0">
             <Link href="/" className="hover:text-primary transition-colors">Home</Link>
-            <Link href="/live-tracking" className="hover:text-primary transition-colors">Live Tracking</Link>
             <Link href="/routes" className="hover:text-primary transition-colors">Routes</Link>
             <Link href="/trip-planner" className="hover:text-primary transition-colors">Trip Planner</Link>
           </nav>

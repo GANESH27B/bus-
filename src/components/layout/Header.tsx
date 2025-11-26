@@ -11,7 +11,6 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 const navLinks = [
   { href: "/", label: "Home" },
-  { href: "/live-tracking", label: "Live Tracking" },
   { href: "/routes", label: "Routes" },
   { href: "/trip-planner", label: "Trip Planner" },
 ];
@@ -45,10 +44,9 @@ export default function Header() {
             <Link
               key={link.href}
               href={link.href}
-              target={link.target}
               className={cn(
                 "transition-colors text-primary-foreground/80 hover:text-primary-foreground",
-                pathname === link.href && !link.target && "text-primary-foreground font-semibold"
+                pathname === link.href && "text-primary-foreground font-semibold"
               )}
             >
               {link.label}
@@ -81,11 +79,10 @@ export default function Header() {
                       <Link
                         key={link.href}
                         href={link.href}
-                        target={link.target}
                         onClick={() => setMenuOpen(false)}
                         className={cn(
                           "transition-colors hover:text-primary",
-                          pathname === link.href && !link.target ? "text-primary font-semibold" : "text-muted-foreground"
+                          pathname === link.href ? "text-primary font-semibold" : "text-muted-foreground"
                         )}
                       >
                         {link.label}
