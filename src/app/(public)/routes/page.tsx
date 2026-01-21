@@ -233,7 +233,7 @@ export default function RoutesPage() {
                                         }
                                     }}
                                 >
-                                <Input placeholder="e.g., City Bus Terminal" {...field} />
+                                <Input placeholder="e.g., Majestic Bus Stand, Bangalore" {...field} />
                                 </Autocomplete>
                             </FormControl>
                             <FormMessage />
@@ -258,7 +258,7 @@ export default function RoutesPage() {
                                         }
                                     }}
                                 >
-                                <Input placeholder="e.g., Railway Station" {...field} />
+                                <Input placeholder="e.g., Chennai Central Railway Station" {...field} />
                                 </Autocomplete>
                             </FormControl>
                             <FormMessage />
@@ -422,7 +422,7 @@ export default function RoutesPage() {
                                 <FormItem className="flex-grow">
                                     <FormLabel className="sr-only">Service Number</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="Enter Service Number..." {...field} />
+                                        <Input placeholder="Enter reservation service number" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -476,7 +476,7 @@ export default function RoutesPage() {
             <Card>
                  <CardHeader>
                     <CardTitle>Track by Vehicle Number</CardTitle>
-                    <CardDescription>Enter the bus's registration number (e.g., AP 28 Z 5566) to see its location.</CardDescription>
+                    <CardDescription>Enter the bus's registration number (e.g., KA-01-F-1234) to see its location.</CardDescription>
                 </CardHeader>
                 <CardContent>
                      <Form {...trackVehicleForm}>
@@ -488,7 +488,7 @@ export default function RoutesPage() {
                                 <FormItem className="flex-grow">
                                     <FormLabel className="sr-only">Vehicle Number</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="Enter Vehicle Number..." {...field} />
+                                        <Input placeholder="Enter bus registration number" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -540,5 +540,7 @@ export default function RoutesPage() {
     </div>
   );
 }
+
+    
 
     
