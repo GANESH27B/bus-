@@ -1,7 +1,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowRight, Route, Bot, MapPin, ExternalLink } from "lucide-react";
+import { ArrowRight, Route, Bot, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
@@ -28,13 +28,6 @@ const features = [
     href: "/nearby-stops",
     buttonText: "Learn More",
   },
-  {
-    icon: <ExternalLink className="h-8 w-8 text-primary" />,
-    title: "Official State Schedules",
-    description: "Find official bus schedules and book tickets directly from state transport websites.",
-    href: "https://www.google.com/search?q=list+of+state+road+transport+corporation+websites+in+india",
-    buttonText: "Search Sites",
-  }
 ];
 
 export default function HomePage() {
@@ -80,7 +73,7 @@ export default function HomePage() {
               Everything you need to navigate the city's bus network with ease.
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
             {features.map((feature) => (
               <Card key={feature.title} className="bg-card text-card-foreground border-border/50 shadow-sm hover:shadow-lg transition-all duration-300 group flex flex-col text-center">
                   <CardContent className="p-8 flex-grow flex flex-col items-center">
