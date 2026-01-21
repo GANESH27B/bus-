@@ -1,11 +1,11 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { format, parseISO } from 'date-fns';
+import { format } from 'date-fns';
 import { getAvailableServices, trackByServiceNumber, trackByVehicleNumber } from './actions';
 import {
   Form,
@@ -86,6 +86,10 @@ export default function RoutesPage() {
   const [error, setError] = useState<string | null>(null);
   const [searched, setSearched] = useState(false);
   const [trackingResult, setTrackingResult] = useState<any | null>(null);
+  
+  const fromAutocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
+  const toAutocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
+
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
     libraries: ['places'],
@@ -219,12 +223,11 @@ export default function RoutesPage() {
                              <FormControl>
                                 <Autocomplete
                                     onLoad={(autocomplete) => {
-                                        autocomplete.setFields(["formatted_address"]);
+                                        fromAutocompleteRef.current = autocomplete;
                                     }}
                                     onPlaceChanged={() => {
-                                        const autocomplete = (window as any).fromAutocomplete;
-                                        if (autocomplete !== null) {
-                                            const place = autocomplete.getPlace();
+                                        const place = fromAutocompleteRef.current?.getPlace();
+                                        if (place?.formatted_address) {
                                             field.onChange(place.formatted_address);
                                         }
                                     }}
@@ -245,12 +248,11 @@ export default function RoutesPage() {
                             <FormControl>
                                <Autocomplete
                                     onLoad={(autocomplete) => {
-                                        autocomplete.setFields(["formatted_address"]);
+                                       toAutocompleteRef.current = autocomplete;
                                     }}
                                     onPlaceChanged={() => {
-                                        const autocomplete = (window as any).toAutocomplete;
-                                        if (autocomplete !== null) {
-                                            const place = autocomplete.getPlace();
+                                        const place = toAutocompleteRef.current?.getPlace();
+                                        if (place?.formatted_address) {
                                             field.onChange(place.formatted_address);
                                         }
                                     }}
@@ -537,7 +539,5 @@ export default function RoutesPage() {
     </div>
   );
 }
-
-    
 
     
