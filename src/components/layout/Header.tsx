@@ -4,7 +4,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BusFront, Menu, MapPin, MapSearch, ExternalLink, ChevronDown } from "lucide-react";
+import { BusFront, Menu, MapPin, ExternalLink, ChevronDown, Route as RouteIcon, Bot, Map } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -20,10 +20,10 @@ import { stateTransportLinks } from "@/lib/state-transport-links";
 import { Separator } from "../ui/separator";
 
 const navLinks = [
-  { href: "/", label: "Live Map" },
-  { href: "/routes", label: "Routes" },
-  { href: "/trip-planner", label: "Trip Planner" },
-  { href: "/map-search", label: "Map Search" },
+  { href: "/", label: "Nearby Stops", icon: <MapPin className="h-4 w-4"/> },
+  { href: "/routes", label: "Routes", icon: <RouteIcon className="h-4 w-4"/> },
+  { href: "/trip-planner", label: "Trip Planner", icon: <Bot className="h-4 w-4"/> },
+  { href: "/map-search", label: "Map Search", icon: <Map className="h-4 w-4"/> },
 ];
 
 export default function Header() {
@@ -119,10 +119,11 @@ export default function Header() {
                             href={link.href}
                             onClick={() => setMenuOpen(false)}
                             className={cn(
-                              "transition-colors hover:text-primary",
+                              "transition-colors hover:text-primary flex items-center gap-2",
                               pathname === link.href ? "text-primary font-semibold" : "text-muted-foreground"
                             )}
                           >
+                            {link.icon}
                             {link.label}
                           </Link>
                         ))}

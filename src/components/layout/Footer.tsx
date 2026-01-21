@@ -15,7 +15,7 @@ export default function Footer() {
             <span className="text-lg font-bold">SmartBus Connect</span>
           </div>
           <nav className="flex flex-wrap justify-center gap-4 md:gap-6 text-sm mb-4 md:mb-0">
-            <Link href="/" className="hover:text-primary transition-colors">Live Map</Link>
+            <Link href="/" className="hover:text-primary transition-colors">Nearby Stops</Link>
             <Link href="/routes" className="hover:text-primary transition-colors">Routes</Link>
             <Link href="/trip-planner" className="hover:text-primary transition-colors">Trip Planner</Link>
             <Link href="/map-search" className="hover:text-primary transition-colors">Map Search</Link>
