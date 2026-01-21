@@ -91,6 +91,7 @@ export default function RoutesPage() {
   const toAutocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
 
   const { isLoaded } = useJsApiLoader({
+    id: 'google-map-script',
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
     libraries: ['places'],
   });
@@ -228,7 +229,7 @@ export default function RoutesPage() {
                                     onPlaceChanged={() => {
                                         const place = fromAutocompleteRef.current?.getPlace();
                                         if (place?.formatted_address) {
-                                            field.onChange(place.formatted_address);
+                                            searchForm.setValue('from', place.formatted_address);
                                         }
                                     }}
                                 >
@@ -253,7 +254,7 @@ export default function RoutesPage() {
                                     onPlaceChanged={() => {
                                         const place = toAutocompleteRef.current?.getPlace();
                                         if (place?.formatted_address) {
-                                            field.onChange(place.formatted_address);
+                                            searchForm.setValue('to', place.formatted_address);
                                         }
                                     }}
                                 >
