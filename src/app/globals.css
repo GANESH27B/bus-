@@ -4,30 +4,30 @@
 
 @layer base {
   :root {
-    --background: 0 0% 98%;
+    --background: 210 25% 95%; /* #f0f3f5 */
     --foreground: 222.2 84% 4.9%;
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-    --primary: 0 72% 51%; /* red */
-    --primary-foreground: 0 0% 100%;
+    --primary: 210 29% 24%; /* #2c3e50 */
+    --primary-foreground: 210 40% 98%;
     --secondary: 222.2 84% 4.9%; /* black */
     --secondary-foreground: 210 40% 98%;
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%; /* a light gray that complements red */
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 205 70% 53%; /* #3498db */
+    --accent-foreground: 210 40% 98%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 0 72% 51%;
-    --chart-1: 0 72% 51%;
-    --chart-2: 0 72% 61%;
-    --chart-3: 0 72% 71%;
-    --chart-4: 0 72% 81%;
-    --chart-5: 0 72% 91%;
+    --ring: 210 29% 24%;
+    --chart-1: 210 29% 24%;
+    --chart-2: 210 29% 34%;
+    --chart-3: 210 29% 44%;
+    --chart-4: 210 29% 54%;
+    --chart-5: 210 29% 64%;
     --radius: 0.5rem;
     --sidebar-background: 222.2 84% 4.9%;
     --sidebar-foreground: 210 40% 98%;
@@ -45,24 +45,24 @@
     --card-foreground: 210 40% 98%;
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
-    --primary: 0 72% 51%; /* red */
+    --primary: 210 29% 24%;
     --primary-foreground: 210 40% 98%;
     --secondary: 222.2 84% 4.9%; /* black */
     --secondary-foreground: 210 40% 98%;
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
+    --accent: 205 70% 53%;
     --accent-foreground: 210 40% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 0 72% 51%;
-    --chart-1: 0 72% 51%;
-    --chart-2: 0 72% 61%;
-    --chart-3: 0 72% 71%;
-    --chart-4: 0 72% 81%;
-    --chart-5: 0 72% 91%;
+    --ring: 210 29% 24%;
+    --chart-1: 210 29% 24%;
+    --chart-2: 210 29% 34%;
+    --chart-3: 210 29% 44%;
+    --chart-4: 210 29% 54%;
+    --chart-5: 210 29% 64%;
     --sidebar-background: 222.2 84% 4.9%;
     --sidebar-foreground: 210 40% 98%;
     --sidebar-primary: 170 78% 40%;

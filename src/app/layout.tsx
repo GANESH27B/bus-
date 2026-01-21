@@ -4,7 +4,7 @@ import { Toaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
   title: 'SmartBus Connect',
-  description: 'Real-time bus tracking and fleet management for modern cities.',
+  description: 'Real-time bus tracking and fleet management for cities of all sizes.',
 };
 
 export default function RootLayout({
