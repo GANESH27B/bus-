@@ -4,7 +4,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BusFront, Menu, MapPin, MapSearch } from "lucide-react";
+import { BusFront, Menu, MapPin, MapSearch, ExternalLink } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,7 @@ const navLinks = [
   { href: "/trip-planner", label: "Trip Planner" },
   { href: "/map-search", label: "Map Search" },
   { href: "/nearby-stops", label: "Nearby Stops" },
+  { href: "https://www.google.com/search?q=official+state+road+transport+corporation+websites", label: "State Schedules", isExternal: true },
 ];
 
 export default function Header() {
@@ -47,12 +48,15 @@ export default function Header() {
             <Link
               key={link.href}
               href={link.href}
+              target={link.isExternal ? "_blank" : undefined}
+              rel={link.isExternal ? "noopener noreferrer" : undefined}
               className={cn(
-                "transition-colors text-primary-foreground/80 hover:text-primary-foreground",
-                pathname === link.href && "text-primary-foreground font-semibold"
+                "transition-colors text-primary-foreground/80 hover:text-primary-foreground flex items-center",
+                pathname === link.href && !link.isExternal && "text-primary-foreground font-semibold"
               )}
             >
               {link.label}
+              {link.isExternal && <ExternalLink className="ml-1.5 h-4 w-4" />}
             </Link>
           ))}
         </nav>
@@ -82,13 +86,16 @@ export default function Header() {
                       <Link
                         key={link.href}
                         href={link.href}
+                        target={link.isExternal ? "_blank" : undefined}
+                        rel={link.isExternal ? "noopener noreferrer" : undefined}
                         onClick={() => setMenuOpen(false)}
                         className={cn(
-                          "transition-colors hover:text-primary",
-                          pathname === link.href ? "text-primary font-semibold" : "text-muted-foreground"
+                          "transition-colors hover:text-primary flex items-center",
+                          pathname === link.href && !link.isExternal ? "text-primary font-semibold" : "text-muted-foreground"
                         )}
                       >
                         {link.label}
+                         {link.isExternal && <ExternalLink className="ml-1.5 h-4 w-4" />}
                       </Link>
                     ))}
                   </div>
