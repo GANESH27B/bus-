@@ -21,7 +21,7 @@ export default function Footer() {
             <Link href="/map-search" className="hover:text-primary transition-colors">Map Search</Link>
             <Link href="/nearby-stops" className="hover:text-primary transition-colors">Nearby Stops</Link>
             <Link href="https://www.google.com/search?q=official+state+road+transport+corporation+websites" target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors flex items-center">
-              State Schedules <ExternalLink className="ml-1.5 h-4 w-4" />
+              Official Schedules <ExternalLink className="ml-1.5 h-4 w-4" />
             </Link>
           </nav>
           <div className="text-sm text-muted-foreground">

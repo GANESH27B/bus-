@@ -4,11 +4,20 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BusFront, Menu, MapPin, MapSearch, ExternalLink } from "lucide-react";
+import { BusFront, Menu, MapPin, MapSearch, ExternalLink, ChevronDown } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { stateTransportLinks } from "@/lib/state-transport-links";
+import { Separator } from "../ui/separator";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -16,7 +25,6 @@ const navLinks = [
   { href: "/trip-planner", label: "Trip Planner" },
   { href: "/map-search", label: "Map Search" },
   { href: "/nearby-stops", label: "Nearby Stops" },
-  { href: "https://www.google.com/search?q=official+state+road+transport+corporation+websites", label: "State Schedules", isExternal: true },
 ];
 
 export default function Header() {
@@ -48,17 +56,38 @@ export default function Header() {
             <Link
               key={link.href}
               href={link.href}
-              target={link.isExternal ? "_blank" : undefined}
-              rel={link.isExternal ? "noopener noreferrer" : undefined}
               className={cn(
-                "transition-colors text-primary-foreground/80 hover:text-primary-foreground flex items-center",
-                pathname === link.href && !link.isExternal && "text-primary-foreground font-semibold"
+                "transition-colors text-primary-foreground/80 hover:text-primary-foreground",
+                pathname === link.href && "text-primary-foreground font-semibold"
               )}
             >
               {link.label}
-              {link.isExternal && <ExternalLink className="ml-1.5 h-4 w-4" />}
             </Link>
           ))}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" className="text-primary-foreground/80 hover:text-primary-foreground hover:bg-white/20 focus-visible:bg-white/20 px-3 py-2 flex items-center gap-1 -ml-2">
+                  State Schedules <ChevronDown className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-56">
+                <ScrollArea className="h-72">
+                  {stateTransportLinks.map((link) => (
+                    <DropdownMenuItem key={link.name} asChild>
+                      <Link
+                        href={link.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex justify-between w-full"
+                      >
+                        {link.name}
+                        <ExternalLink className="h-4 w-4 text-muted-foreground" />
+                      </Link>
+                    </DropdownMenuItem>
+                  ))}
+                </ScrollArea>
+              </DropdownMenuContent>
+            </DropdownMenu>
         </nav>
         <div className="flex flex-1 items-center justify-end md:hidden">
             <Sheet open={isMenuOpen} onOpenChange={setMenuOpen}>
@@ -71,34 +100,52 @@ export default function Header() {
                   <span className="sr-only">Toggle Menu</span>
                 </Button>
               </SheetTrigger>
-              <SheetContent side="left" className="pr-0 bg-background text-foreground border-border">
-                <Link
-                  href="/"
-                  className="mr-6 flex items-center space-x-2 px-6"
-                  onClick={() => setMenuOpen(false)}
-                >
-                  <BusFront className="h-6 w-6 text-primary" />
-                  <span className="font-bold">SmartBus Connect</span>
-                </Link>
-                <div className="my-4 h-[calc(100vh-8rem)] pb-10">
-                  <div className="flex flex-col space-y-3 px-6">
-                    {navLinks.map((link) => (
-                      <Link
-                        key={link.href}
-                        href={link.href}
-                        target={link.isExternal ? "_blank" : undefined}
-                        rel={link.isExternal ? "noopener noreferrer" : undefined}
-                        onClick={() => setMenuOpen(false)}
-                        className={cn(
-                          "transition-colors hover:text-primary flex items-center",
-                          pathname === link.href && !link.isExternal ? "text-primary font-semibold" : "text-muted-foreground"
-                        )}
-                      >
-                        {link.label}
-                         {link.isExternal && <ExternalLink className="ml-1.5 h-4 w-4" />}
-                      </Link>
-                    ))}
-                  </div>
+              <SheetContent side="left" className="p-0 pr-0 bg-background text-foreground border-border">
+                <div className="px-6 py-4">
+                  <Link
+                    href="/"
+                    className="mr-6 flex items-center space-x-2"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    <BusFront className="h-6 w-6 text-primary" />
+                    <span className="font-bold">SmartBus Connect</span>
+                  </Link>
+                </div>
+                <div className="h-[calc(100vh-6rem)] pb-10">
+                   <ScrollArea className="h-full">
+                      <div className="flex flex-col space-y-3 px-6">
+                        {navLinks.map((link) => (
+                          <Link
+                            key={link.href}
+                            href={link.href}
+                            onClick={() => setMenuOpen(false)}
+                            className={cn(
+                              "transition-colors hover:text-primary",
+                              pathname === link.href ? "text-primary font-semibold" : "text-muted-foreground"
+                            )}
+                          >
+                            {link.label}
+                          </Link>
+                        ))}
+                      </div>
+                      <Separator className="my-4" />
+                      <div className="px-6 mb-2 text-sm font-semibold text-foreground">State Schedules</div>
+                      <div className="flex flex-col space-y-3 px-6">
+                        {stateTransportLinks.map((link) => (
+                          <Link
+                            key={link.name}
+                            href={link.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={() => setMenuOpen(false)}
+                            className="transition-colors hover:text-primary flex items-center justify-between text-muted-foreground"
+                          >
+                            <span>{link.name}</span>
+                            <ExternalLink className="h-4 w-4" />
+                          </Link>
+                        ))}
+                      </div>
+                   </ScrollArea>
                 </div>
               </SheetContent>
             </Sheet>
