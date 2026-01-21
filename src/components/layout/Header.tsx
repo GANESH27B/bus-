@@ -4,7 +4,7 @@
 import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BusFront, Menu, MapPin, ExternalLink, ChevronDown, Route as RouteIcon, Bot, Map } from "lucide-react";
+import { BusFront, Menu, MapPin, ExternalLink, ChevronDown, Route as RouteIcon, Bot, Map, Home } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -20,7 +20,8 @@ import { stateTransportLinks } from "@/lib/state-transport-links";
 import { Separator } from "../ui/separator";
 
 const navLinks = [
-  { href: "/", label: "Nearby Stops", icon: <MapPin className="h-4 w-4"/> },
+  { href: "/", label: "Home", icon: <Home className="h-4 w-4"/> },
+  { href: "/nearby-stops", label: "Nearby Stops", icon: <MapPin className="h-4 w-4"/> },
   { href: "/routes", label: "Routes", icon: <RouteIcon className="h-4 w-4"/> },
   { href: "/trip-planner", label: "Trip Planner", icon: <Bot className="h-4 w-4"/> },
   { href: "/map-search", label: "Map Search", icon: <Map className="h-4 w-4"/> },
